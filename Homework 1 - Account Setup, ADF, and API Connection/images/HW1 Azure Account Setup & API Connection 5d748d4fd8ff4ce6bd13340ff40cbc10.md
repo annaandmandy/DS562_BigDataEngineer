@@ -22,9 +22,9 @@
 
 - **Create a Resource Group within your Subscription**
 
-![image.png](images/image.png)
+![image.png](image.png)
 
-![image.png](images/image%201.png)
+![image.png](image%201.png)
 
 ![***Please make sure that the region is set to East US 2 otherwise you will run into cost issues…***](image%202.png)
 
@@ -62,13 +62,13 @@ In the context of our Azure use case,  we will be using the cheapest redundancy,
 
 - **Advanced**: Ensure you enable "Hierarchical namespace". This enables Data Lake Storage Gen 2 features on top of your Blob Storage.
 
-![image.png](images/image%203.png)
+![image.png](image%203.png)
 
-![image.png](images/image%204.png)
+![image.png](image%204.png)
 
-![image.png](images/image%205.png)
+![image.png](image%205.png)
 
-![image.png](images/image%206.png)
+![image.png](image%206.png)
 
 ### 4. Create a Blob Storage Container
 
@@ -80,7 +80,7 @@ In the context of our Azure use case,  we will be using the cheapest redundancy,
 💡 This can be done by navigating to the storage browser within the Azure Blob Storage sidebar menu, and creating a container. 
 *If hierarchal namespace (Data Lake V2 Feature) wasn’t enabled, you would have noticed the ability to create a flat container, but not a container stored within a container (nested containers).*
 
-![image.png](images/7ad6be80-14a5-4264-9f09-e8bdaa72ffb5.png)
+![image.png](7ad6be80-14a5-4264-9f09-e8bdaa72ffb5.png)
 
 </aside>
 
@@ -90,7 +90,7 @@ In the context of our Azure use case,  we will be using the cheapest redundancy,
 
 - **Region**: ‘(US) East US 2’.
 
-![image.png](images/image%207.png)
+![image.png](image%207.png)
 
 <aside>
 💡 ***What is a Azure Data Factory (ADF)?***
@@ -111,7 +111,7 @@ Github can be connected with your ADF environment to automate the build, test, a
 
 - You need to first launch the ADF
 
-![image.png](images/image%208.png)
+![image.png](image%208.png)
 
 ### 7. Sign Up for OpenWeatherMap Free Access
 
@@ -124,7 +124,7 @@ Github can be connected with your ADF environment to automate the build, test, a
     - Visit the [OpenWeatherMap for Education website](https://openweathermap.org/our-initiatives) and follow the steps to sign up for an account.
     - Provide the necessary information to verify your student status and gain free access to their services.
     
-    ![image.png](images/image%209.png)
+    ![image.png](image%209.png)
     
 
 ### 8. Grant Instructors Access to Resource Group
@@ -242,13 +242,13 @@ For example, if you are copying data from an Azure SQL Database to an Azure Blob
     - **Hint:**
         - **Base URL**: Enter the base URL for the OpenWeather Historical Air Pollution API (`http://api.openweathermap.org/`). Within our upcoming pipeline, we will be simulating the concatenation of API parameters onto this pipeline (example of full call below):
             
-            ![image.png](images/image%2014.png)
+            ![image.png](image%2014.png)
             
 3. **Create Linked Service for Azure Data Lake Storage.**
     
-    ![image.png](images/image%2015.png)
+    ![image.png](image%2015.png)
     
-    ![image.png](images/image%2016.png)
+    ![image.png](image%2016.png)
     
 
 ### 4. Create Pipelines for Data Ingestion
@@ -299,7 +299,7 @@ Time Frame: Data from approximately **one year ago to yesterday**, ensuring cove
     - [Documentation Link on setting up ForEach Activity](https://learn.microsoft.com/en-us/azure/data-factory/control-flow-for-each-activity)
     This activity is used to iterate over a collection and executes specified activities in a loop. The loop implementation of this activity is similar to Foreach looping structure in programming languages. Ensure the Sequential option is checked if you want the iterations to run one after another. If you want them to run in parallel, leave it unchecked.
         
-        ![image.png](images/image%2017.png)
+        ![image.png](image%2017.png)
         
     
     Note: the **Items** property (within the ForEach loop) is used in Azure Data Factory or Azure Synapse *Pipelines* for iterating over a collection of values. It defines the list of values or objects that a loop will iterate over. For the homework, we want to iterate over specifically the *dateRanges* parameter of the pipeline.
@@ -347,7 +347,7 @@ Time Frame: Data from approximately **one year ago to yesterday**, ensuring cove
         <aside>
         💡 Notice the above code is similar to the API call example here:
         
-        ![image.png](images/image%2019.png)
+        ![image.png](image%2019.png)
         
         The `@{dataset()}` function in Azure Data Factory (ADF) is used within a dataset to access parameters defined in that dataset. This allows you to create dynamic datasets that can change based on the input parameters passed to them from the pipeline. 
         
@@ -367,7 +367,7 @@ Time Frame: Data from approximately **one year ago to yesterday**, ensuring cove
     
     The air pollution API connection has considerably less restrictions in terms of API calls, so the pipeline will be more straightforward compared with the historical weather data pipeline.
     
-    ![image.png](images/image%2020.png)
+    ![image.png](image%2020.png)
     
     </aside>
     
@@ -377,7 +377,7 @@ Time Frame: Data from approximately **one year ago to yesterday**, ensuring cove
 1. **MAKE SURE EVERYTHING IS CORRECT UP TO THIS POINT BEFORE MOVING ON!**
 2. **Trigger the Pipelines. PLEASE DO NOT USE DEBUG MODE! Instead, just trigger the pipeline:**
 
-![image.png](images/image%2021.png)
+![image.png](image%2021.png)
 
 1. **Monitor the Pipeline Run.**
 
@@ -388,7 +388,7 @@ Time Frame: Data from approximately **one year ago to yesterday**, ensuring cove
 
 You can find your cost under **Cost Analysis** in the Cost Management tab. If you are using an RG using Professor’s subscription, you can monitor your specific RG’s costs under Root Management Group →  Professor’s Subscription → Your Specific RG
 
-![image.png](images/image%2022.png)
+![image.png](image%2022.png)
 
 </aside>
 
@@ -411,9 +411,9 @@ You can find your cost under **Cost Analysis** in the Cost Management tab. If yo
 
 - details of specific elements instructors are looking for to be outlined on Gradescope, but below is general idea of what we are looking for
 
-![image.png](images/image%2023.png)
+![image.png](image%2023.png)
 
-![image.png](images/image%2024.png)
+![image.png](image%2024.png)
 
 ![For historical weather, you can have several files, or one large file depending on if you flattened the hierarchy or not. Air pollution will have one large file.](ac72b917-182f-4ed9-8ef3-b46ddbf0982e.png)
 
