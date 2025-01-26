@@ -4,17 +4,44 @@
 
 Set up an Azure account and the foundational resources necessary for the subsequent homework assignments. This involves creating a Resource Group, Storage Account, Blob Storage container, Data Factory, and connecting a Git repository.
 
-> **NOTE** - Homework 1c builds on your activities in Homework 1b (Extract and Load). You will be using the same `Resource Group` and `Data-Factory` from the previous assignment. If you could not complete Homework 1b due to difficulties, please reach out to your LF Office Hours for assistance before starting this assignment.
 
-In Homework 1b, you extracted and loaded a data file into your storage account. For Homework 1c, you will extend that work by transforming and moving data from a `.txt` file into a SQL Server database table. Refer to the appendix of this [reference document](https://static.nhtsa.gov/odi/ffdd/cmpl/Import_Instructions_Excel_All.pdf) for details on datatypes and fields.
-
-## Assignment Overview
+## Part 1: Azure Account Setup
+#### 1. Sign Up for an Azure Student Account
+1. Visit the [Azure Student Free Account website](https://azure.microsoft.com/en-us/free/students) and click on “Activate your student benefits.”
+2. Follow the prompts to sign up for a new Azure student account. You might need to verify your student status through your educational institution’s email. Note that Azure offers *$100* in credits for 12 months and a range of free services.
+3. Make sure to select the **Azure Student Subscription** (and not the BU IS&T subscription)
 Using your existing Data Factory, you will:
 
-1. **Transform**: Convert the `DateA` column datatype from text to date.
-2. **Stage**: Load the transformed data into a database table named `<initials>Complaints` within a SQL Server database.
+#### 2. Set Up a Resource Group within your Subscription
+> **NOTE** - What is a Resource Group?  
+[Resource groups](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-setup-guide/organize-resources) are logical containers where you can deploy and manage Azure resources like virtual machines, web apps, databases, and storage accounts. Similar to the folder system inside your laptop/personal computer, it helps organize related Azure resources  that work together to support a specific application or service.
+>
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+  <img src="images/create%20a%20resource%20group%20part%201.png" alt="Part 1" style="width: 30%; max-width: 400px; height: auto;">
+  <img src="images/create%20a%20resource%20group%20part%202.png" alt="Part 2" style="width: 30%; max-width: 400px; height: auto;">
+  <img src="images/create%20a%20resource%20group%20part%203.png" alt="Part 3" style="width: 30%; max-width: 400px; height: auto;">
+</div>
+
+#### 3. Create a Data Lake Storage Gen 2 Account
+> **NOTE** - What is a Data Lake Storage Account?  
+[Data Lake Storage Gen 2](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) is a set of capabilities dedicated to big data analytics built on top of [Azure Blob Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blobs-overview). It provides file system semantics, file-level security, and scale on top of Azure Blob Storage’s low-cost, tiered storage, with high availability/disaster recovery capabilities.
+*A good analogy is to think of Blob Storage as a pile of books, whereas Data Lake Storage Gen 2 is putting that pile into a library, giving order/hierarchy to the unstructured pile of data files.*
+
+>
+
+
+
 
 > **Hint** Download the Homework1c.pdf file from the ‘Transforming and Staging’ folder in this repository and review its contents.
+
+
+
+
+
+
+
+
+
 
 ## Steps to Complete Homework 1c
 
