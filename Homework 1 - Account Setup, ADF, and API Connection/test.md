@@ -1,8 +1,8 @@
-# Homework 1c - Transforming and Staging
+# HW1: Azure Account Setup & API Connection
 
-**Class,**
+**Objective:**
 
-In Homework 1a and 1b you created some of the Azure services being used for the semester assignments, then grabbed our source data from the NHTSA website, uzipped that data to a `.txt` file and placed the file in storage for further use. Now we culminate our first homework assignment, Homework 1c. Here we will take all the work done to date, and complete the assignment to be graded.
+Set up an Azure account and the foundational resources necessary for the subsequent homework assignments. This involves creating a Resource Group, Storage Account, Blob Storage container, Data Factory, and connecting a Git repository.
 
 > **NOTE** - Homework 1c builds on your activities in Homework 1b (Extract and Load). You will be using the same `Resource Group` and `Data-Factory` from the previous assignment. If you could not complete Homework 1b due to difficulties, please reach out to your LF Office Hours for assistance before starting this assignment.
 
