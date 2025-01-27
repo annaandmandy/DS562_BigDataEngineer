@@ -40,7 +40,7 @@ Configuration Settings:
 </div>
 
 > 💡 - **Data Redundancy**
-[Data redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy)** is the practice of storing multiple copies of the same data in different locations or systems. While having multiple copies of data might seem inefficient, it ensures that the data remains available and reliable across different regions and in the case of database failure.
+[Data redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy) is the practice of storing multiple copies of the same data in different locations or systems. While having multiple copies of data might seem inefficient, it ensures that the data remains available and reliable across different regions and in the case of database failure.
 <u>Designing Data-Intensive Applications</u> by Martin Kleppmann describes the reasoning behind data redundancy well:
 *"Replication is used to keep a copy of the same data on multiple machines, which can serve several purposes: to increase **availability** (allowing the system to continue working even if some parts of it are down), to increase **read throughput** (by load balancing reads across replicas), and to **reduce latency** (by keeping data geographically close to users)…”*
 In the context of our Azure use case,  we will be using the cheapest redundancy, **LRS**, which maintains three synchronous copies within a single data center. It does not replicate across other data centers/regions, and is the most at-risk in terms of data unavailability events.
@@ -133,7 +133,7 @@ After creating a new Activity in the pipeline orchestration menu, you can click 
   <img src="images\linked service +new.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
   <i style ="max-width: 50%; height: auto;" ></i>
   </div>
-  
+
 >💡 - **Linked Services**
 [Linked services](https://learn.microsoft.com/en-us/azure/data-factory/concepts-linked-services?tabs=data-factory) refer to connections to external resources/services, enabling the platform to interact with those sources. The true power of linked services comes from their *reusability in different pipelines/dataflows.*
 For example, if you are copying data from an Azure SQL Database to an Azure Blob Storage, linked services must be first defined for the SQL Database and for the Azure Blob Storage. After creating these services, if you need to reference those same datasets for different transformations/dataflows, you can just reference the created linked services instead of making the connections from scratch again.
