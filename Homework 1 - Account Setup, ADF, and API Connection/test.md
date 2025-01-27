@@ -137,7 +137,7 @@ Before REST connector becomes available for an API, you may use the HTTP connect
 1. We must first create a source dataset connection which either uses REST or HTTP. The base URL will be referencing the openweathermap api (http://api.openweathermap.org/).
 2. We then use a relative URL, which defines resource paths without including the full URL, simplifying code and configurations:
 ```
-data/2.5/history/city?lat=@{dataset().lat}&lon=@{dataset().lon}&type=@{dataset().dataType}&start=@{dataset().start}&end=@{dataset().end}&appid=@{dataset().appid}
+data/2.5/air_pollution/history?lat=@{dataset().lat}&lon=@{dataset().lon}&start=@{dataset().start}&end=@{dataset().end}&appid=@{dataset().appid}
 ```
 <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
   <img src="images\openweather relative url.png"  style="max-width: 75%; height: auto;">
@@ -151,7 +151,11 @@ The `@{dataset()}` function in Azure Data Factory (ADF) is used within a dataset
 `@{dataset().lon}`: Accesses the `lon` parameter value passed to the dataset.
 `@{dataset().dataType}`: Accesses the `dataType` parameter value passed to the dataset.
 ...and so on for the rest of the parameters…
-3. After defining the relative URL, we have to define the dataset parameters. 
+3. After defining the relative URL, we have to define the dataset parameters. Latitude and Longitude will be Boston specific, and the start and end times need to be UNIX timestamps ranging from current time to a year ago.
+The appid parameter will be your API key, which we are pasting directly without encrpytion into the dataset parameters.
+4. Lastly, we sink our data as a JSON format into our azure blob storage account. This should be organized according to the medallion architecture, and should be separate from the historical weather data we will ingest.
+5. Trigger the pipeline.
+![alt text](image.png)
 #### 2. Create an ADF Pipeline for Historical Weather Data Ingestion
 
 
