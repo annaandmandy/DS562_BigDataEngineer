@@ -107,14 +107,56 @@ We have to create pipelines to collect the historical data into our ADLS storage
 - Location: Boston *(this can be done by identifying the longitude and latitude coordinates of the Boston area)*
 - Frequency: Hourly
 - Time Frame: Data from approximately **one year ago to yesterday**, ensuring coverage for roughly 11 months.
+
 For better organization and maintenance, we want to create **two separate pipelines** for weather data and air pollution data ingestion. We are going to start with the *Air Pollution Pipeline* as its simpler and more straightforward.
+##### Creating a Copy Data Activity 
+We will create a [Copy Data](https://learn.microsoft.com/en-us/azure/data-factory/quickstart-hello-world-copy-data-tool) activity in our azure data factory, which will allow us to move data from Point A (source) to Point B (sink). For air pollution, our source is the online API, and our sink is Azure blob storage within your created storage account.
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\air pollution activity.png" style="max-width: 75%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" ></i>
+  </div>
 
+##### Linked Service Setup
+After creating a new Activity in the pipeline orchestration menu, you can click “+New” in the Linked Service menu under “Source” and “Sink”.
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\linked service +new.png"  style="max-width: 50%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" ></i>
+  </div>
 
+>💡 
+[Linked services](https://learn.microsoft.com/en-us/azure/data-factory/concepts-linked-services?tabs=data-factory) refer to connections to external resources/services, enabling the platform to interact with those sources. The true power of linked services comes from their *reusability in different pipelines/dataflows.*
+For example, if you are copying data from an Azure SQL Database to an Azure Blob Storage, linked services must be first defined for the SQL Database and for the Azure Blob Storage. After creating these services, if you need to reference those same datasets for different transformations/dataflows, you can just reference the created linked services instead of making the connections from scratch again.
+We will be creating ADF linked services for all resources we will be using. 
+
+>💡[**REST vs HTTP:**](https://learn.microsoft.com/en-us/azure/data-factory/connector-http?tabs=data-factory)
+You have two choices when creating linked services connecting to the OpenWeather API:
+[REST](https://learn.microsoft.com/en-us/azure/data-factory/connector-rest?tabs=data-factory) connector specifically support copying data from RESTful APIs, following the REST architectural principles. 
+[HTTP](https://learn.microsoft.com/en-us/azure/data-factory/connector-http?tabs=data-factory) connector is generic to retrieve data from any HTTP endpoint, e.g. to download file. It’s requests are unstructured compared to REST, and requires specific mapping to adhere to API requests.
+Before REST connector becomes available for an API, you may use the HTTP connector to copy data from RESTful APIs, which is supported but less functional compared to REST connectors. For the purpose of the homework, we will be using the **HTTP** connector. The only difference being that with a REST dataset, you wouldn’t initially specify the datatype whereas with HTTP you would (JSON).
+
+1. We must first create a source dataset connection which either uses REST or HTTP. The base URL will be referencing the openweathermap api (http://api.openweathermap.org/).
+2. We then use a relative URL, which defines resource paths without including the full URL, simplifying code and configurations:
+```
+data/2.5/history/city?lat=@{dataset().lat}&lon=@{dataset().lon}&type=@{dataset().dataType}&start=@{dataset().start}&end=@{dataset().end}&appid=@{dataset().appid}
+```
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\openweather relative url.png"  style="max-width: 75%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" ></i>
+  </div>
+
+>💡
+Notice the similarities between the API documentation and the Azure API call.
+The `@{dataset()}` function in Azure Data Factory (ADF) is used within a dataset to access parameters defined in that dataset. This allows you to create dynamic datasets that can change based on the input parameters passed to them from the pipeline. 
+`@{dataset().lat}`: Accesses the `lat` parameter value passed to the dataset.
+`@{dataset().lon}`: Accesses the `lon` parameter value passed to the dataset.
+`@{dataset().dataType}`: Accesses the `dataType` parameter value passed to the dataset.
+...and so on for the rest of the parameters…
+3. After defining the relative URL, we have to define the dataset parameters. 
 #### 2. Create an ADF Pipeline for Historical Weather Data Ingestion
 
 
 ##### For Each Activity
-We are going to start with setting up the mechanisms to make multiple calls to the historical weather API. Due to the API restrictions, we have a maximum amount of data we can get per call. Thus, our pipeline will have to make multiple API calls through [Copy Data](https://learn.microsoft.com/en-us/azure/data-factory/quickstart-hello-world-copy-data-tool) activities within a [ForEach](https://learn.microsoft.com/en-us/azure/data-factory/control-flow-for-each-activity) loop, where each call sources around a week's worth of data from the API and sinks it into Azure blob storage.
+We are going to start with setting up the mechanisms to make multiple calls to the historical weather API. Due to the API restrictions on historical weather (there were no restrictions on Air Pollution calls), we have a maximum amount of data we can get per call. Thus, our pipeline will have to make multiple API calls through [Copy Data](https://learn.microsoft.com/en-us/azure/data-factory/quickstart-hello-world-copy-data-tool) activities within a [ForEach](https://learn.microsoft.com/en-us/azure/data-factory/control-flow-for-each-activity) loop, where each call sources around a week's worth of data from the API and sinks it into Azure blob storage.
 <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
   <img src="images\foreach activity.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
   <i style ="max-width: 60%; height: auto;" ></i>
@@ -130,23 +172,7 @@ The main [difference](https://learn.microsoft.com/en-us/azure/data-factory/conce
   <i style ="max-width: 50%; height: auto;" >You can access Parameters of a pipeline by simply clicking an empty area in the pipeline window, and the menu would appear.</i>
   </div>
 
-##### Linked Service Setup
-After creating a new Activity in the pipeline orchestration menu, you can click “+New” in the Linked Service menu under “Source” and “Sink”.
-<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
-  <img src="images\linked service +new.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
-  <i style ="max-width: 50%; height: auto;" ></i>
-  </div>
 
->💡 
-[Linked services](https://learn.microsoft.com/en-us/azure/data-factory/concepts-linked-services?tabs=data-factory) refer to connections to external resources/services, enabling the platform to interact with those sources. The true power of linked services comes from their *reusability in different pipelines/dataflows.*
-For example, if you are copying data from an Azure SQL Database to an Azure Blob Storage, linked services must be first defined for the SQL Database and for the Azure Blob Storage. After creating these services, if you need to reference those same datasets for different transformations/dataflows, you can just reference the created linked services instead of making the connections from scratch again.
-We will be creating ADF linked services for all resources we will be using. 
-
->💡[**REST vs HTTP:**](https://learn.microsoft.com/en-us/azure/data-factory/connector-http?tabs=data-factory)
-You have two choices when creating linked services connecting to the OpenWeather API:
-[REST](https://learn.microsoft.com/en-us/azure/data-factory/connector-rest?tabs=data-factory) connector specifically support copying data from RESTful APIs, following the REST architectural principles. 
-[HTTP](https://learn.microsoft.com/en-us/azure/data-factory/connector-http?tabs=data-factory) connector is generic to retrieve data from any HTTP endpoint, e.g. to download file. It’s requests are unstructured compared to REST, and requires specific mapping to adhere to API requests.
-Before REST connector becomes available for an API, you may use the HTTP connector to copy data from RESTful APIs, which is supported but less functional comparing to REST connector. For the purpose of the homework, we will be using the **HTTP** connector. The only difference being that with a REST dataset, you wouldn’t initially specify the datatype whereas with HTTP you would (JSON).
 
 
 >💡
@@ -167,12 +193,6 @@ Use the `Complaints Reference File` to set up your table attributes with the cor
 ### Step 4: Query and Export Results
 After loading the data, run the following query in your SQL Server, making sure to replace the table name with the name you created for your table in your database:
 
-```sql
-SELECT
- *
-FROM <cbsComplaints>
-WHERE DATEA = CONVERT(Date, GETDATE() - 1)
-```
 
 > 💡: The "GETDATE() - 1" is a SQL command specifying Today's date -1 day, aka yesterday. However, if your latest file download is prior to today, or happens to fall on a weekend, you will have to change the "-1" to the most recent day where records exist in the source dataset. (-2, -5, -7, etc for the number of days back)
 

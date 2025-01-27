@@ -13,12 +13,8 @@
 - Make sure to select the **Azure Student Subscription** (and not the BU IS&T subscription)
 
 ### 2. Set Up a Resource Group
-
-<aside>
 💡 ***What is a Resource Group?***  
 [**Resource groups**](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-setup-guide/organize-resources) are logical containers where you can deploy and manage Azure resources like virtual machines, web apps, databases, and storage accounts. Similar to the *folder system* inside your laptop/personal computer, it helps organize related Azure resources  that work together to support a specific application or service.
-
-</aside>
 
 - **Create a Resource Group within your Subscription**
 
