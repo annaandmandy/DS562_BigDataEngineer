@@ -134,6 +134,9 @@ You have two choices when creating linked services connecting to the OpenWeather
 [HTTP](https://learn.microsoft.com/en-us/azure/data-factory/connector-http?tabs=data-factory) connector is generic to retrieve data from any HTTP endpoint, e.g. to download file. It’s requests are unstructured compared to REST, and requires specific mapping to adhere to API requests.
 Before REST connector becomes available for an API, you may use the HTTP connector to copy data from RESTful APIs, which is supported but less functional compared to REST connectors. For the purpose of the homework, we will be using the **HTTP** connector. The only difference being that with a REST dataset, you wouldn’t initially specify the datatype whereas with HTTP you would (JSON).
 
+>💡
+[Anonymous authentication](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/authentication/anonymousauthentication) allows users to access resources or applications without providing any identity verification (e.g., username or password). It is typically used for public-facing applications or websites where user identity is not necessary for basic access.
+##### Copy Data Activity Setup
 1. We must first create a source dataset connection which either uses REST or HTTP. The base URL will be referencing the openweathermap api (http://api.openweathermap.org/).
 2. We then use a relative URL, which defines resource paths without including the full URL, simplifying code and configurations:
 ```
@@ -176,68 +179,14 @@ The main [difference](https://learn.microsoft.com/en-us/azure/data-factory/conce
   <i style ="max-width: 50%; height: auto;" >You can access Parameters of a pipeline by simply clicking an empty area in the pipeline window, and the menu would appear.</i>
   </div>
 
+##### Historical Weather Linked Service Specifics
+Compared to the air pollution relative url, the linked service for historical weather will have another parameter, *datatype*. We want to ingest hourly data for each API call, so you will need to specify this in the dataset parameters.
+```data/2.5/history/city?lat=@{dataset().lat}&lon=@{dataset().lon}&type=@{dataset().dataType}&start=@{dataset().start}&end=@{dataset().end}&appid=@{dataset().appid}```
+Every time the Copy Data activity within the ForEach loop is ran, it makes a GET request to the OpenWeather API. We want to collect at least a week’s worth of data per API call, and get the past year’s (52 weeks) historical weather data starting from today. To do this, we need to not only set dynamic expressions for the “start” and “end” date parameters (which the API requires) to collect the right range of information, but also match the formatting to the API’s UNIX time formatting. Here are some useful functions from the ADF expression language that you might find yourself using for the **start, end** dataset parameters.
+
+- *addDays(startDate, daysToAdd, format?) -* adds (or subtracts) a specified number of days to a given date or timestamp. You can use this function to dynamically set date ranges
+- *utcNow() -* returns the current date and time in UTC format. You will need to convert this into the OpenWeather API time format within your expression.
+- *item()* - returns the current value in a loop within a ForEach activity in Azure Data Factory.
+- *ticks()* - converts a date into the number of "ticks" since specified epoch time in .NET ticks (1 tick = 100 nanoseconds). You will need this function to format the UNIX expression into the OpenWeather format, which is *ticks now - ticks since '1970-01-01T00:00:00Z’* (UNIX Epoch time). Then you would still need to convert these *ticks* into UTC format (divide by 10000000)
 
 
-
->💡
-[Anonymous authentication](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/authentication/anonymousauthentication) allows users to access resources or applications without providing any identity verification (e.g., username or password). It is typically used for public-facing applications or websites where user identity is not necessary for basic access.
-
-```azurecli-interactive
-az deployment group create --resource-group <resource-group-name> --template-file <path-to-template.json> --parameters <path-to-parameters.json>
-```
-
-### Step 2: Create Your Database Table
-Use the `Complaints Reference File` to set up your table attributes with the correct data types. It is recommended to use `NVARCHAR` for text columns to handle Unicode characters. The reference file specifies the lengths of each of the attributes (columns) when defining your database table.
-
-### Step 3: Load Data with Azure Data Factory
-1. Use Azure Data Factory to create a pipeline that includes:
-   - **Transformation**: Convert the `DateA` column from text to a date (not datetime) format.
-   - **Loading**: Insert the data into the `<initials>Complaints` table.
-
-### Step 4: Query and Export Results
-After loading the data, run the following query in your SQL Server, making sure to replace the table name with the name you created for your table in your database:
-
-
-> 💡: The "GETDATE() - 1" is a SQL command specifying Today's date -1 day, aka yesterday. However, if your latest file download is prior to today, or happens to fall on a weekend, you will have to change the "-1" to the most recent day where records exist in the source dataset. (-2, -5, -7, etc for the number of days back)
-
-Output the results to a file and save it as a PDF for submission.
-
-## Reference Documents and Tools
-- [Getting Started with Azure Data Factory](https://learn.microsoft.com/en-us/azure/data-factory/quickstart-create-data-factory)
-- [Creating a Storage Account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal)
-- [Creating a Database in Azure SQL Server Using Your Existing SQL Server](https://learn.microsoft.com/en-us/azure/azure-sql/database/single-database-create-quickstart?view=azuresql&tabs=azure-portal)
-- [Creating a Table in an Azure SQL Database](https://www.edureka.co/community/62364/how-to-create-table-in-azure-sql-database)
-- [Complaints Data File](https://static.nhtsa.gov/odi/ffdd/cmpl/FLAT_CMPL.zip)
-- [Complaints Reference File](https://static.nhtsa.gov/odi/ffdd/cmpl/Import_Instructions_Excel_All.pdf)
-- [Copy Tool](https://docs.microsoft.com/en-us/azure/data-factory/copy-activity-overview)
-- [Data Flow](https://docs.microsoft.com/en-us/azure/data-factory/concepts-data-flow-overview)
-
----
-
-## Submission
-
-> Submit the following as proof of your work:
-
-**IMPORTANT:** Ensure your BU account information is visible in the top right corner of your screenshots for verification.
-
-1. **Screenshot of Query Execution in Azure SQL Database** 
-   - <img src="../../images/hw1c/hw3-screenshot.png" alt="Screenshot" width="400">
-
-2. **PDF of SQL Query Output** Typically you can expect approximately a couple hundred records added per day, so if you are getting more, check your query, else, if you have zero, you may need to go back further with your GETDATE command.
-
-Save the screenshots as `.png` or `.jpg` files and upload them through the course submission portal for Homework 1c. For a further explanation on how to submit your assignment on Gradescope, refer to the Blackboard page or request support from your Learning Facilitator.
-
----
-
-## Points to Consider 🤔
-- How do you use the `Complaints Reference File` to create a table in Azure SQL Database?
-- How do you use the `Copy Tool` to load data from Azure Storage to Azure SQL Database?
-- How do you handle rows with missing values?
-- What happens if the data in the txt file does not adhere to the datatype you've set for your SQL database table?
-- What if the header column names differ from table column names?
-- What is the current format of the file, the delimiter, and the number of columns?
-- How do you map columns and change their data types?
-
----
-
-Ensure you understand each step and reach out with any questions!
