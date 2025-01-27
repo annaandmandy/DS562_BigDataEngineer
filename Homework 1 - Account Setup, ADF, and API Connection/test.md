@@ -39,12 +39,12 @@ Configuration Settings:
   <img src="images/create storage account step 4.png" alt="Part 3" style="width: 30%; max-width: 400px; height: auto;">
 </div>
 
->💡 - **Data Redundancy**
+> 💡 - **Data Redundancy**
 [Data redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy) is the practice of storing multiple copies of the same data in different locations or systems. While having multiple copies of data might seem inefficient, it ensures that the data remains available and reliable across different regions and in the case of database failure.
 <u>Designing Data-Intensive Applications</u> by Martin Kleppmann describes the reasoning behind data redundancy well:
 *"Replication is used to keep a copy of the same data on multiple machines, which can serve several purposes: to increase **availability** (allowing the system to continue working even if some parts of it are down), to increase **read throughput** (by load balancing reads across replicas), and to **reduce latency** (by keeping data geographically close to users)…”*
 In the context of our Azure use case,  we will be using the cheapest redundancy, **LRS**, which maintains three synchronous copies within a single data center. It does not replicate across other data centers/regions, and is the most at-risk in terms of data unavailability events.
-
+>
 #### 4. Create a Blob Storage Container within your Storage Account
 This can be done by navigating to the storage browser within the Azure Blob Storage sidebar menu, and creating a container. If hierarchal namespace (Data Lake V2 Feature) wasn’t enabled, you would have noticed the ability to create a flat container, but not a container stored within a container (nested containers).
 <div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
