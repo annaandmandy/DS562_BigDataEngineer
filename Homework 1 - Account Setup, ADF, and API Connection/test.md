@@ -11,7 +11,7 @@ Set up an Azure account and the foundational resources necessary for the subsequ
 Using your existing Data Factory, you will:
 
 #### 2. Set Up a Resource Group within your Subscription
-> **NOTE** - What is a Resource Group?  
+> 💡 - **Resource Group**  
 [Resource groups](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-setup-guide/organize-resources) are logical containers where you can deploy and manage Azure resources like virtual machines, web apps, databases, and storage accounts. Similar to the folder system inside your laptop/personal computer, it helps organize related Azure resources  that work together to support a specific application or service.
 >
 <div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
@@ -21,7 +21,7 @@ Using your existing Data Factory, you will:
 </div>
 
 #### 3. Create a Data Lake Storage Gen 2 Account
-> **NOTE** - What is a **Data Lake Storage Account?**
+> 💡 - **Data Lake Storage**
 [Data Lake Storage Gen 2](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) is a set of capabilities dedicated to big data analytics built on top of [Azure Blob Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blobs-overview). It provides file system semantics, file-level security, and scale on top of Azure Blob Storage’s low-cost, tiered storage, with high availability/disaster recovery capabilities.
 *A good analogy is to think of Blob Storage as a pile of books, whereas Data Lake Storage Gen 2 is putting that pile into a library, giving order/hierarchy to the unstructured pile of data files.*
 >
@@ -39,7 +39,7 @@ Configuration Settings:
   <img src="images/create storage account step 4.png" alt="Part 3" style="width: 30%; max-width: 400px; height: auto;">
 </div>
 
-> **NOTE** - ***Data Redundancy*
+> 💡 - **Data Redundancy**
 [Data redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy)** is the practice of storing multiple copies of the same data in different locations or systems. While having multiple copies of data might seem inefficient, it ensures that the data remains available and reliable across different regions and in the case of database failure.
 <u>Designing Data-Intensive Applications</u> by Martin Kleppmann describes the reasoning behind data redundancy well:
 *"Replication is used to keep a copy of the same data on multiple machines, which can serve several purposes: to increase **availability** (allowing the system to continue working even if some parts of it are down), to increase **read throughput** (by load balancing reads across replicas), and to **reduce latency** (by keeping data geographically close to users)…”*
@@ -52,7 +52,7 @@ This can be done by navigating to the storage browser within the Azure Blob Stor
 </div>
 
 #### 5. Create a Azure Data Factory within your Resource Group
-> **NOTE** - **Azure Data Factory**
+> 💡 - **Azure Data Factory**
 Azure Data Factory(ADF) is a cloud-based data integration service that is designed to orchestrate and automate data movement and transformation across various data sources and destinations. It is cost effective (pay as you use) and scalable for enterprise data needs.
 <div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
   <img src="images/create an adf.png" alt="Part 3" style="width: 50%; height: auto;">
@@ -88,23 +88,66 @@ In order for your assignments to be graded, the instructors require access to vi
 
 ## Part 2: Connecting to the API via the ADF
 **Objective:**
-Ingest weekly historical weather and air pollution data from the OpenWeather APIs into Azure Data Lake Storage using Azure Data Factory. We want at least a year’s worth of this weekly data, and will have to model our pipelines to account for the API call restrictions. This involves using the API key within ADF, ADF linked services, building & running pipelines, monitoring the data ingestion process, and pushing configurations to a GitHub repository. 
+Ingest weekly historical weather and air pollution data from the OpenWeather APIs into Azure Data Lake Storage using Azure Data Factory. We want at least a **year’s worth of this weekly data**, and will have to model our pipelines to account for the API call restrictions. This involves using the API key within ADF, ADF linked services, building & running pipelines, monitoring the data ingestion process, and pushing configurations to a GitHub repository. 
 
 *Before we start, we need to first learn about Data Lakehouse, as well as the Medallion Lakehouse Architecture.*
 
-> **NOTE** - Data Lakehouse
+> 💡 - **Data Lakehouse**
 A [Data Lakehouse](https://learn.microsoft.com/en-us/azure/databricks/lakehouse/) is a data management system that combines the best features of data lakes (scalability, flexibility) and data warehouses (structure, performance) all under a single architecture. 
 >
 
-> **NOTE** - Medallion Lakehouse Architecture
+> 💡 - **Medallion Lakehouse Architecture**
 [Medallion Lakehouse Architecture](https://learn.microsoft.com/en-us/azure/databricks/lakehouse/medallion) is a data management and analytics architecture pattern used in modern Data Lakehouse environments. This architecture is designed to organize and manage data efficiently as it flows through different stages, typically referred to as Bronze, Silver, and Gold layers. Refer to the documentation on the specific differences of the layers.
 >
 
-> **NOTE** - Security Concerns with the API
+> 💡 - **Security Concerns with the API**
 Originally, the various assignments utilized the Azure Key Vault service to securely contain API keys. Having unencrypted API keys within pipelines/code is a security issue, but for our homework purposes we want to avoid complicating processes. Identity management and permission sets will be discussed in class, but not required for the homework.
 >
+#### 1. Create an ADF Pipeline for Data Ingestion
+Now, we have to create pipelines to ingest the historical data into our ADLS storage. The pipeline must ingest the following historical weather & air pollution data:
+- Location: Boston *(this can be done by identifying the longitude and latitude coordinates of the Boston area)*
+- Frequency: Hourly
+- Time Frame: Data from approximately **one year ago to yesterday**, ensuring coverage for roughly 11 months.
+
+For better organization and maintenance, we want to create **two separate pipelines** for weather data and air pollution data ingestion. We are going to start with the Historical Weather Pipeline.
+##### For Each Activity
+Due to the API restrictions, we have a maximum amount of data we can get per API call. Thus, our pipeline will have to make multiple API calls through [Copy Data](https://learn.microsoft.com/en-us/azure/data-factory/quickstart-hello-world-copy-data-tool) activities within a [ForEach](https://learn.microsoft.com/en-us/azure/data-factory/control-flow-for-each-activity) loop, where the source collects data from the API and sinks it into local storage.
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\foreach activity.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
+  <i style ="max-width: 60%; height: auto;" ></i>
+  </div>
+
+To make **multiple API calls** within ADF, we need to utilize the [**ForEach**](https://learn.microsoft.com/en-us/azure/data-factory/control-flow-for-each-activity) activity flow, which will repeat the **‘Copy’** activity for the specified dates. This activity is used to iterate over a collection and executes specified activities in a loop. The loop implementation of this activity is similar to ForEach looping structure in programming languages. Ensure  the **Sequential** option is checked if you want the iterations to run one after another. If you want them to run in parallel, leave it unchecked.
+
+The **Items**   property (within the ForEach loop) is used in Azure Data Factory or Azure Synapse Pipelines for iterating over a collection of values. It defines the list of values or objects that a loop will iterate over.
+>💡 - **Difference between pipeline parameter or variable**
+The main [difference](https://learn.microsoft.com/en-us/azure/data-factory/concepts-parameters-variables) is that pipeline parameters cannot be modified during a pipeline run, whereas pipeline variables are values that can be set and modified during a pipeline run via “set variable activity”. For the purpose of this assignment, you will need a variable/parameter to define the range in which the ForEach loop should run. 
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\parameter vs variable.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >You can access Parameters of a pipeline by simply clicking an empty area in the pipeline window, and the menu would appear.</i>
+  </div>
+
+##### Linked Service Setup
+After creating a new Activity in the pipeline orchestration menu, you can click “+New” in the Linked Service menu under “Source” and “Sink”.
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\linked service +new.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" ></i>
+  </div>
+  
+>💡 - **Linked Services**
+[Linked services](https://learn.microsoft.com/en-us/azure/data-factory/concepts-linked-services?tabs=data-factory) refer to connections to external resources/services, enabling the platform to interact with those sources. The true power of linked services comes from their *reusability in different pipelines/dataflows.*
+For example, if you are copying data from an Azure SQL Database to an Azure Blob Storage, linked services must be first defined for the SQL Database and for the Azure Blob Storage. After creating these services, if you need to reference those same datasets for different transformations/dataflows, you can just reference the created linked services instead of making the connections from scratch again.
+We will be creating ADF linked services for all resources we will be using. 
+
+>💡[**REST vs HTTP**](https://learn.microsoft.com/en-us/azure/data-factory/connector-http?tabs=data-factory)
+You have two choices when creating linked services connecting to the OpenWeather API:
+[REST](https://learn.microsoft.com/en-us/azure/data-factory/connector-rest?tabs=data-factory) connector specifically support copying data from RESTful APIs, following the REST architectural principles. 
+[HTTP](https://learn.microsoft.com/en-us/azure/data-factory/connector-http?tabs=data-factory) connector is generic to retrieve data from any HTTP endpoint, e.g. to download file. It’s requests are unstructured compared to REST, and requires specific mapping to adhere to API requests.
+Before REST connector becomes available for an API, you may use the HTTP connector to copy data from RESTful APIs, which is supported but less functional comparing to REST connector. For the purpose of the homework, we will be using the **HTTP** connector. The only difference being that with a REST dataset, you wouldn’t initially specify the datatype whereas with HTTP you would (JSON).
 
 
+>💡 **Anonymous Authentication?**
+[Anonymous authentication](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/authentication/anonymousauthentication) allows users to access resources or applications without providing any identity verification (e.g., username or password). It is typically used for public-facing applications or websites where user identity is not necessary for basic access.
 
 ```azurecli-interactive
 az deployment group create --resource-group <resource-group-name> --template-file <path-to-template.json> --parameters <path-to-parameters.json>
@@ -128,7 +171,7 @@ FROM <cbsComplaints>
 WHERE DATEA = CONVERT(Date, GETDATE() - 1)
 ```
 
-> **Note**: The "GETDATE() - 1" is a SQL command specifying Today's date -1 day, aka yesterday. However, if your latest file download is prior to today, or happens to fall on a weekend, you will have to change the "-1" to the most recent day where records exist in the source dataset. (-2, -5, -7, etc for the number of days back)
+> 💡: The "GETDATE() - 1" is a SQL command specifying Today's date -1 day, aka yesterday. However, if your latest file download is prior to today, or happens to fall on a weekend, you will have to change the "-1" to the most recent day where records exist in the source dataset. (-2, -5, -7, etc for the number of days back)
 
 Output the results to a file and save it as a PDF for submission.
 
