@@ -162,9 +162,9 @@ The appid parameter will be your API key, which we are pasting directly without 
   <img src="images\image.png"  style="max-width: 75%; height: auto;">
   <i style ="max-width: 50%; height: auto;" ></i>
   </div>
+
 #### 2. Create an ADF Pipeline for Historical Weather Data Ingestion
-
-
+Historical Weather has some different parameters and API call restrictions when compared to historical weather. We will be creating another pipeline to ingest historical weather data.
 ##### For Each Activity
 We are going to start with setting up the mechanisms to make multiple calls to the historical weather API. Due to the API restrictions on historical weather (there were no restrictions on Air Pollution calls), we have a maximum amount of data we can get per call. Thus, our pipeline will have to make multiple API calls through [Copy Data](https://learn.microsoft.com/en-us/azure/data-factory/quickstart-hello-world-copy-data-tool) activities within a [ForEach](https://learn.microsoft.com/en-us/azure/data-factory/control-flow-for-each-activity) loop, where each call sources around a week's worth of data from the API and sinks it into Azure blob storage.
 <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
@@ -183,6 +183,7 @@ The main [difference](https://learn.microsoft.com/en-us/azure/data-factory/conce
   </div>
 
 ##### Historical Weather Linked Service Specifics
+**Source**
 Compared to the air pollution relative url, the linked service for historical weather will have another parameter, *datatype*. We want to ingest hourly data for each API call, so you will need to specify this in the dataset parameters.
 ```data/2.5/history/city?lat=@{dataset().lat}&lon=@{dataset().lon}&type=@{dataset().dataType}&start=@{dataset().start}&end=@{dataset().end}&appid=@{dataset().appid}```
 Every time the Copy Data activity within the ForEach loop is ran, it makes a GET request to the OpenWeather API. We want to collect at least a week’s worth of data per API call, and get the past year’s (52 weeks) historical weather data starting from today. To do this, we need to not only set dynamic expressions for the “start” and “end” date parameters (which the API requires) to collect the right range of information, but also match the formatting to the API’s UNIX time formatting. Here are some useful functions from the ADF expression language that you might find yourself using for the **start, end** dataset parameters.
@@ -192,4 +193,19 @@ Every time the Copy Data activity within the ForEach loop is ran, it makes a GET
 - *item()* - returns the current value in a loop within a ForEach activity in Azure Data Factory.
 - *ticks()* - converts a date into the number of "ticks" since specified epoch time in .NET ticks (1 tick = 100 nanoseconds). You will need this function to format the UNIX expression into the OpenWeather format, which is *ticks now - ticks since '1970-01-01T00:00:00Z’* (UNIX Epoch time). Then you would still need to convert these *ticks* into UTC format (divide by 10000000)
 
+**Sink**
+Since we are using a ForEach loop, there is some nuance when it comes to writing to the sink. Here is a breakdown of some of the sink configurations and their effects:
+- **Flatten Hierarchy**: All files from the source in each iteration are written directly to the sink folder without retaining their original directory structure. If multiple iterations write files with the same name, subsequent iterations might overwrite the earlier files unless unique naming is applied.
+*Example usecase*: You process daily logs in a loop and write all logs for a month into a single destination folder for reporting.
+- **Merge Files**: Data from the source files processed during each iteration is combined into a single file per iteration in the destination. Each iteration generates one merged file.
+*Example usecase*: Each iteration processes data for a specific region, and you create a single merged file per region.
+- **Preserve Hierarchy**: The source folder structure from each iteration is replicated at the destination. Each iteration preserves the hierarchy of the processed files and directories.
+*Example usecase*: Iterations handle data for different years, and you want to retain year-based subfolders in the sink for organization.
 
+We want separate files for historical weather that look similar to the below screenshot:
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\sink.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
+  <i style ="max-width: 75%; height: auto;" ></i>
+  </div>
+
+Feel free to try to [dynamically name](https://www.youtube.com/watch?v=f_9LjNXWYSc&ab_channel=MitchellPearson) the files, but that is not a requirement.
