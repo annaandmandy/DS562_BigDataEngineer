@@ -39,11 +39,6 @@ Configuration Settings:
   <img src="images/create storage account step 4.png" alt="Part 3" style="width: 30%; max-width: 400px; height: auto;">
 </div>
 
-<<<<<<< HEAD
->💡 
-=======
-> 💡 - **Data Redundancy**
->>>>>>> a73c1482ff4d38c5b177784d589166602600595f
 [Data redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy) is the practice of storing multiple copies of the same data in different locations or systems. While having multiple copies of data might seem inefficient, it ensures that the data remains available and reliable across different regions and in the case of database failure.
 <u>Designing Data-Intensive Applications</u> by Martin Kleppmann describes the reasoning behind data redundancy well:
 *"Replication is used to keep a copy of the same data on multiple machines, which can serve several purposes: to increase **availability** (allowing the system to continue working even if some parts of it are down), to increase **read throughput** (by load balancing reads across replicas), and to **reduce latency** (by keeping data geographically close to users)…”*
@@ -88,7 +83,7 @@ In order for your assignments to be graded, the instructors require access to vi
   <i style ="max-width: 50%; height: auto;" >We then want to assign access to the relevant instructors.</i>
 <img src="images\grant instructors part 4.png" alt="Grant Instructors Part 3" style="max-width: 50%; height: auto;">
   <i style ="max-width: 50%; height: auto;" >We then ensure that the assignment type is both “Active” and “Permanent” </i>
-</div>
+</div>   
 
 ## Part 2: Connecting to the API via the ADF
 **Objective:**
