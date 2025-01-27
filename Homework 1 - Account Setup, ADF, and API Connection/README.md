@@ -158,7 +158,10 @@ The `@{dataset()}` function in Azure Data Factory (ADF) is used within a dataset
 The appid parameter will be your API key, which we are pasting directly without encrpytion into the dataset parameters.
 4. Lastly, we sink our data as a JSON format into our azure blob storage account. This should be organized according to the medallion architecture, and should be separate from the historical weather data we will ingest.
 5. Trigger the pipeline.
-![alt text](image.png)
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\image.png"  style="max-width: 75%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" ></i>
+  </div>
 #### 2. Create an ADF Pipeline for Historical Weather Data Ingestion
 
 
