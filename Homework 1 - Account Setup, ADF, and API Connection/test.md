@@ -1,11 +1,9 @@
 # HW1: Azure Account Setup & API Connection
 
+## Part 1: Azure Account Setup
 **Objective:**
 
-Set up an Azure account and the foundational resources necessary for the subsequent homework assignments. This involves creating a Resource Group, Storage Account, Blob Storage container, Data Factory, and connecting a Git repository.
-
-
-## Part 1: Azure Account Setup
+Set up an Azure account and the foundational resources necessary for the subsequent homework assignments. This involves creating a Resource Group, Storage Account, Blob Storage container, Data Factory, and creating an OpenWeather account for an API key.
 #### 1. Sign Up for an Azure Student Account
 1. Visit the [Azure Student Free Account website](https://azure.microsoft.com/en-us/free/students) and click on “Activate your student benefits.”
 2. Follow the prompts to sign up for a new Azure student account. You might need to verify your student status through your educational institution’s email. Note that Azure offers *$100* in credits for 12 months and a range of free services.
@@ -23,32 +21,90 @@ Using your existing Data Factory, you will:
 </div>
 
 #### 3. Create a Data Lake Storage Gen 2 Account
-> **NOTE** - What is a Data Lake Storage Account?  
+> **NOTE** - What is a **Data Lake Storage Account?**
 [Data Lake Storage Gen 2](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) is a set of capabilities dedicated to big data analytics built on top of [Azure Blob Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blobs-overview). It provides file system semantics, file-level security, and scale on top of Azure Blob Storage’s low-cost, tiered storage, with high availability/disaster recovery capabilities.
 *A good analogy is to think of Blob Storage as a pile of books, whereas Data Lake Storage Gen 2 is putting that pile into a library, giving order/hierarchy to the unstructured pile of data files.*
+>
+Configuration Settings:
+1. **Region**: ‘(US) East US 2’
+2. **Performance**: Standard (for general-purpose storage)
+3. **Redundancy**: Locally redundant storage (LRS) is sufficient for this homework
+4. **Advanced**: Enable "Hierarchical namespace", which enables Data Lake Storage Gen 2 features on top of your Blob Storage.
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+  <img src="images/create storage account step 1.png" alt="Part 1" style="width: 30%; max-width: 400px; height: auto;">
+  <img src="images/create storage account step 2.png" alt="Part 2" style="width: 30%; max-width: 400px; height: auto;">
+</div>
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+  <img src="images/create storage account step 3.png" alt="Part 3" style="width: 30%; max-width: 400px; height: auto;">
+  <img src="images/create storage account step 4.png" alt="Part 3" style="width: 30%; max-width: 400px; height: auto;">
+</div>
 
+> **NOTE** - ***Data Redundancy*
+[Data redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy)** is the practice of storing multiple copies of the same data in different locations or systems. While having multiple copies of data might seem inefficient, it ensures that the data remains available and reliable across different regions and in the case of database failure.
+<u>Designing Data-Intensive Applications</u> by Martin Kleppmann describes the reasoning behind data redundancy well:
+*"Replication is used to keep a copy of the same data on multiple machines, which can serve several purposes: to increase **availability** (allowing the system to continue working even if some parts of it are down), to increase **read throughput** (by load balancing reads across replicas), and to **reduce latency** (by keeping data geographically close to users)…”*
+In the context of our Azure use case,  we will be using the cheapest redundancy, **LRS**, which maintains three synchronous copies within a single data center. It does not replicate across other data centers/regions, and is the most at-risk in terms of data unavailability events.
+
+#### 4. Create a Blob Storage Container within your Storage Account
+This can be done by navigating to the storage browser within the Azure Blob Storage sidebar menu, and creating a container. If hierarchal namespace (Data Lake V2 Feature) wasn’t enabled, you would have noticed the ability to create a flat container, but not a container stored within a container (nested containers).
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+  <img src="images/create storage account step 4.png" alt="Part 3" style="width: 50%; height: auto;">
+</div>
+
+#### 5. Create a Azure Data Factory within your Resource Group
+> **NOTE** - **Azure Data Factory**
+Azure Data Factory(ADF) is a cloud-based data integration service that is designed to orchestrate and automate data movement and transformation across various data sources and destinations. It is cost effective (pay as you use) and scalable for enterprise data needs.
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+  <img src="images/create an adf.png" alt="Part 3" style="width: 50%; height: auto;">
+</div>
+
+#### 6. (Optional) Create and Connect a Git Repository
+[Github](https://learn.microsoft.com/en-us/azure/data-factory/connector-github?tabs=data-factory) can be connected directly with your ADF environment to automate the build, test, and deployment process of pipelines. For homework purposes, this step is not necessary, but is an option you can consider for your future projects.
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+  <img src="images/create github connection to adf.png" style="width: 90%; height: auto;">
+</div>
+
+#### 7. Sign Up for OpenWeatherMap Free Access
+We will be pulling from the OpenWeatherMap API for both stream data and batch processed data. This API provides access to current weather data, forecasts, and historical weather data for any location worldwide. 
+1. **Create an OpenWeatherMap Account**:
+    - Visit the [OpenWeatherMap for Education website](https://openweathermap.org/our-initiatives) and follow the steps to sign up for an account.
+    - Provide the necessary information to verify your student status and gain free access to their services.
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+  <img src="images/create an open weather account.png" style="width: 80%; height: auto;">
+</div>
+
+#### 8. Grant Instructors Access to Resource Group
+In order for your assignments to be graded, the instructors require access to view your resource group containing your assignment work. Below is a series of screenshots detailing how to properly grant instructors access.
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\grant instructors part 1.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >Within the resource group menu, there is a submenu called Access Control, where you can add/remove role assignments to the overall resource.</i>
+  <img src="images\grant instructors part 2.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >Amongst the roles you can assign, we want to assign instructors “Contributor” over the entire resource group. This allows instructors to view any resource created within the resource group.</i>
+  <img src="images\grant instructors part 3.png" alt="Grant Instructors Part 3" style="max-width: 50%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >We then want to assign access to the relevant instructors.</i>
+<img src="images\grant instructors part 4.png" alt="Grant Instructors Part 3" style="max-width: 50%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >We then ensure that the assignment type is both “Active” and “Permanent” </i>
+</div>
+
+## Part 2: Connecting to the API via the ADF
+**Objective:**
+Ingest weekly historical weather and air pollution data from the OpenWeather APIs into Azure Data Lake Storage using Azure Data Factory. We want at least a year’s worth of this weekly data, and will have to model our pipelines to account for the API call restrictions. This involves using the API key within ADF, ADF linked services, building & running pipelines, monitoring the data ingestion process, and pushing configurations to a GitHub repository. 
+
+*Before we start, we need to first learn about Data Lakehouse, as well as the Medallion Lakehouse Architecture.*
+
+> **NOTE** - Data Lakehouse
+A [Data Lakehouse](https://learn.microsoft.com/en-us/azure/databricks/lakehouse/) is a data management system that combines the best features of data lakes (scalability, flexibility) and data warehouses (structure, performance) all under a single architecture. 
+>
+
+> **NOTE** - Medallion Lakehouse Architecture
+[Medallion Lakehouse Architecture](https://learn.microsoft.com/en-us/azure/databricks/lakehouse/medallion) is a data management and analytics architecture pattern used in modern Data Lakehouse environments. This architecture is designed to organize and manage data efficiently as it flows through different stages, typically referred to as Bronze, Silver, and Gold layers. Refer to the documentation on the specific differences of the layers.
+>
+
+> **NOTE** - Security Concerns with the API
+Originally, the various assignments utilized the Azure Key Vault service to securely contain API keys. Having unencrypted API keys within pipelines/code is a security issue, but for our homework purposes we want to avoid complicating processes. Identity management and permission sets will be discussed in class, but not required for the homework.
 >
 
 
-
-
-> **Hint** Download the Homework1c.pdf file from the ‘Transforming and Staging’ folder in this repository and review its contents.
-
-
-
-
-
-
-
-
-
-
-## Steps to Complete Homework 1c
-
-> For this course, you will use the “Azure for Students” offer provided by Microsoft. This offer allows for a $100 credit that can be replenished once a year as long as a student email address is being used. You will be expected to manage your budget. By adhering closely to the instructions outlined in the homework assignments, you will remain within the $100 credit limit. However, any expenses incurred beyond this allocation will be your responsibility.  
-
-### Step 1: Set Up Your SQL Server and Database
-Once again, you should use the `bash fromTemplate.sh` script from the [top-level ReadMe.md file](https://github.com/cseferlis/OMDSMod4/blob/main/README.md) for creating your SQL Server, using the following command to deploy resources, remembering to replace your resource group, template and parameter details as with Homework 1c:
 
 ```azurecli-interactive
 az deployment group create --resource-group <resource-group-name> --template-file <path-to-template.json> --parameters <path-to-parameters.json>
@@ -66,7 +122,8 @@ Use the `Complaints Reference File` to set up your table attributes with the cor
 After loading the data, run the following query in your SQL Server, making sure to replace the table name with the name you created for your table in your database:
 
 ```sql
-SELECT *
+SELECT
+ *
 FROM <cbsComplaints>
 WHERE DATEA = CONVERT(Date, GETDATE() - 1)
 ```
