@@ -96,21 +96,25 @@ A [Data Lakehouse](https://learn.microsoft.com/en-us/azure/databricks/lakehouse/
 >
 
 > 💡
-[Medallion Lakehouse Architecture](https://learn.microsoft.com/en-us/azure/databricks/lakehouse/medallion) is a data management and analytics architecture pattern used in modern Data Lakehouse environments. This architecture is designed to organize and manage data efficiently as it flows through different stages, typically referred to as Bronze, Silver, and Gold layers. Refer to the documentation on the specific differences of the layers.
+[Medallion Lakehouse Architecture](https://learn.microsoft.com/en-us/azure/databricks/lakehouse/medallion) is a data management and analytics architecture pattern used in modern Data Lakehouse environments. This architecture is designed to organize and manage data efficiently as it flows through different stages, typically referred to as Bronze, Silver, and Gold layers. Refer to the documentation on the specific differences of the layers. We will be using this to organize our data as we ingest and process it.
 >
 
 > 💡 
 Originally, the various assignments utilized the Azure Key Vault service to securely contain API keys. Having unencrypted API keys within pipelines/code is a security issue, but for our homework purposes we want to avoid complicating processes. Identity management and permission sets will be discussed in class, but not required for the homework.
 >
-#### 1. Create an ADF Pipeline for Data Ingestion
-Now, we have to create pipelines to ingest the historical data into our ADLS storage. The pipeline must ingest the following historical weather & air pollution data:
+#### 1. Create an ADF Pipeline for Air Pollution Data Ingestion
+We have to create pipelines to collect the historical data into our ADLS storage. The pipeline must ingest the following historical weather & air pollution data:
 - Location: Boston *(this can be done by identifying the longitude and latitude coordinates of the Boston area)*
 - Frequency: Hourly
 - Time Frame: Data from approximately **one year ago to yesterday**, ensuring coverage for roughly 11 months.
+For better organization and maintenance, we want to create **two separate pipelines** for weather data and air pollution data ingestion. We are going to start with the *Air Pollution Pipeline* as its simpler and more straightforward.
 
-For better organization and maintenance, we want to create **two separate pipelines** for weather data and air pollution data ingestion. We are going to start with the Historical Weather Pipeline.
+
+#### 2. Create an ADF Pipeline for Historical Weather Data Ingestion
+
+
 ##### For Each Activity
-Due to the API restrictions, we have a maximum amount of data we can get per API call. Thus, our pipeline will have to make multiple API calls through [Copy Data](https://learn.microsoft.com/en-us/azure/data-factory/quickstart-hello-world-copy-data-tool) activities within a [ForEach](https://learn.microsoft.com/en-us/azure/data-factory/control-flow-for-each-activity) loop, where the source collects data from the API and sinks it into local storage.
+We are going to start with setting up the mechanisms to make multiple calls to the historical weather API. Due to the API restrictions, we have a maximum amount of data we can get per call. Thus, our pipeline will have to make multiple API calls through [Copy Data](https://learn.microsoft.com/en-us/azure/data-factory/quickstart-hello-world-copy-data-tool) activities within a [ForEach](https://learn.microsoft.com/en-us/azure/data-factory/control-flow-for-each-activity) loop, where each call sources around a week's worth of data from the API and sinks it into Azure blob storage.
 <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
   <img src="images\foreach activity.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
   <i style ="max-width: 60%; height: auto;" ></i>
