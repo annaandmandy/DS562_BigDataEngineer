@@ -2,8 +2,14 @@
 
 ## Part 1: Azure Account Setup
 **Objective:**
-
 Set up an Azure account and the foundational resources necessary for the subsequent homework assignments. This involves creating a Resource Group, Storage Account, Blob Storage container, Data Factory, and creating an OpenWeather account for an API key.
+**Deliverables:**
+- Air Pollution Data containing past year's of data
+- Historical Weather Data containing past 52 weeks of data
+- Azure Data Factory Creation
+- ADF Pipeline creation for Air Pollution
+- ADF Pipeline creation for Historical Weather utilizing For Each
+- Correct Source and Sink Services
 #### PLEASE USE YOUR FIRST AND LAST NAME FOR THE RESOURCE GROUP SO WE CAN EASILY IDENTIFY THE CORRECT HW!
 #### PLEASE ALSO MAKE SURE TO GIVE INSTRUCTORS "contributor access to ACTIVE, PERMANENT"
 #### 1. Sign Up for an Azure Student Account
