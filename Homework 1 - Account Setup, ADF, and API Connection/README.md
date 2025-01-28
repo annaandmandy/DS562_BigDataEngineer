@@ -4,7 +4,7 @@
 **Objective:**
 
 Set up an Azure account and the foundational resources necessary for the subsequent homework assignments. This involves creating a Resource Group, Storage Account, Blob Storage container, Data Factory, and creating an OpenWeather account for an API key.
-#### PLEASE USE YOUR FIRST AND LAST NAME FOR AT LEAST ONE OF THE RESOURCES SO WE CAN IDENTIFY IT THE CORRECT HW!
+#### PLEASE USE YOUR FIRST AND LAST NAME FOR AT LEAST ONE OF THE RESOURCES SO WE CAN IDENTIFY THE CORRECT HW!
 #### PLEASE ALSO MAKE SURE TO GIVE INSTRUCTORS "contributor access to ACTIVE, PERMANENT"
 #### 1. Sign Up for an Azure Student Account
 1. Visit the [Azure Student Free Account website](https://azure.microsoft.com/en-us/free/students) and click on “Activate your student benefits.”
