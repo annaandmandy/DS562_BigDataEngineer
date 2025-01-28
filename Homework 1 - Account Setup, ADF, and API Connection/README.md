@@ -227,6 +227,8 @@ We want separate files for historical weather that look similar to the below scr
 
 
 
-After triggering the pipeline, we can then view the output in our Azure blob storage account using the storage browser and navigating to the correct directory. That concludes Homework 1!
+After triggering the pipeline, we can then view the output in our Azure blob storage account using the storage browser and navigating to the correct directory. That concludes Homework 1! 
+
+Instructors will access your blob storage account and data factory to verify completion. Please ensure you adhere to an appopriate and consistent naming convention for pipelines, folders, services, etc.
 
 
