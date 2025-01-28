@@ -136,6 +136,23 @@ Before REST connector becomes available for an API, you may use the HTTP connect
 
 >💡
 [Anonymous authentication](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/authentication/anonymousauthentication) allows users to access resources or applications without providing any identity verification (e.g., username or password). It is typically used for public-facing applications or websites where user identity is not necessary for basic access.
+
+#### Testing the API with Postman
+Before we schedule data factory activities within our data factory, let's first use Postman to test what our API calls should return. After registering a free account on Postman, you are able to make calls to better understand the API output.
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\postman http.png"  style="max-width: 75%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >We first want to create an HTTP request connecting to the OpenWeather API (<a>https://openweathermap.org/history</a>).</i> 
+  </div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\postman api.png"  style="max-width: 75%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >We then specify the historical weather API (https://api.openweathermap.org/data/2.5/weather). We then specify the above parameters for the API call. Ensure that the start, end unix timestamps only range for around a week long.</i> 
+  </div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\postman output.png"  style="max-width: 75%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >You can then explore the output if correctly called.</i> 
+  </div>
+
+
 ##### Copy Data Activity Setup
 1. We must first create a source dataset connection which either uses REST or HTTP. The base URL will be referencing the openweathermap api (http://api.openweathermap.org/).
 2. We then use a relative URL, which defines resource paths without including the full URL, simplifying code and configurations:
@@ -202,10 +219,14 @@ Since we are using a ForEach loop, there is some nuance when it comes to writing
 - **Preserve Hierarchy**: The source folder structure from each iteration is replicated at the destination. Each iteration preserves the hierarchy of the processed files and directories.
 *Example usecase*: Iterations handle data for different years, and you want to retain year-based subfolders in the sink for organization.
 
-We want separate files for historical weather that look similar to the below screenshot:
+We want separate files for historical weather that look similar to the below screenshot. Feel free to try to [dynamically name](https://www.youtube.com/watch?v=f_9LjNXWYSc&ab_channel=MitchellPearson) the files, but that is not a requirement.
 <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
   <img src="images\sink.png" alt="Grant Instructors Part 1" style="max-width: 50%; height: auto;">
   <i style ="max-width: 75%; height: auto;" ></i>
   </div>
 
-Feel free to try to [dynamically name](https://www.youtube.com/watch?v=f_9LjNXWYSc&ab_channel=MitchellPearson) the files, but that is not a requirement.
+
+
+After triggering the pipeline, we can then view the output in our Azure blob storage account using the storage browser and navigating to the correct directory. That concludes Homework 1!
+
+
