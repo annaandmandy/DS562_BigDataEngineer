@@ -5,6 +5,7 @@
 Set up an Azure account and the foundational resources necessary for the subsequent homework assignments. This involves creating a Resource Group, Storage Account, Blob Storage container, Data Factory, and creating an OpenWeather account for an API key.
 **Deliverables:**
 - Air Pollution Data containing past year's of data
+- Medallion Architecture setup for Blob Storage Directory (Bronze, Silver, Gold)
 - Historical Weather Data containing past 52 weeks of data
 - Azure Data Factory Creation
 - ADF Pipeline creation for Air Pollution
