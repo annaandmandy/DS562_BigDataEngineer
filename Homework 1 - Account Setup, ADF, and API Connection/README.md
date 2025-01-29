@@ -117,6 +117,21 @@ We have to create pipelines to collect the historical data into our ADLS storage
 - Frequency: Hourly
 - Time Frame: Data from approximately **one year ago to yesterday**, ensuring coverage for roughly 11 months.
 
+#### (Optional) Testing the API with Postman
+Before we schedule data factory activities within our data factory, we can first use Postman to test what our API calls should return. After registering a free account on Postman, you are able to make calls to better understand the API output.
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\postman http.png"  style="max-width: 75%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >We first want to create an HTTP request connecting to the OpenWeather API (<a>https://openweathermap.org/history</a>).</i> 
+  </div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\postman api.png"  style="max-width: 75%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >We then specify the historical weather API (https://api.openweathermap.org/data/2.5/weather). We then specify the above parameters for the API call. Ensure that the start, end unix timestamps only range for around a week long.</i> 
+  </div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
+  <img src="images\postman output.png"  style="max-width: 75%; height: auto;">
+  <i style ="max-width: 50%; height: auto;" >You can then explore the output if correctly called.</i> 
+  </div>
+  
 For better organization and maintenance, we want to create **two separate pipelines** for weather data and air pollution data ingestion. We are going to start with the *Air Pollution Pipeline* as its simpler and more straightforward.
 ##### Creating a Copy Data Activity 
 We will create a [Copy Data](https://learn.microsoft.com/en-us/azure/data-factory/quickstart-hello-world-copy-data-tool) activity in our azure data factory, which will allow us to move data from Point A (source) to Point B (sink). For air pollution, our source is the online API, and our sink is Azure blob storage within your created storage account.
@@ -131,7 +146,6 @@ After creating a new Activity in the pipeline orchestration menu, you can click 
   <img src="images\linked service +new.png"  style="max-width: 50%; height: auto;">
   <i style ="max-width: 50%; height: auto;" ></i>
   </div>
-
 >💡 
 [Linked services](https://learn.microsoft.com/en-us/azure/data-factory/concepts-linked-services?tabs=data-factory) refer to connections to external resources/services, enabling the platform to interact with those sources. The true power of linked services comes from their *reusability in different pipelines/dataflows.*
 For example, if you are copying data from an Azure SQL Database to an Azure Blob Storage, linked services must be first defined for the SQL Database and for the Azure Blob Storage. After creating these services, if you need to reference those same datasets for different transformations/dataflows, you can just reference the created linked services instead of making the connections from scratch again.
@@ -145,22 +159,6 @@ Before REST connector becomes available for an API, you may use the HTTP connect
 
 >💡
 [Anonymous authentication](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/authentication/anonymousauthentication) allows users to access resources or applications without providing any identity verification (e.g., username or password). It is typically used for public-facing applications or websites where user identity is not necessary for basic access.
-
-#### Testing the API with Postman
-Before we schedule data factory activities within our data factory, let's first use Postman to test what our API calls should return. After registering a free account on Postman, you are able to make calls to better understand the API output.
-<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
-  <img src="images\postman http.png"  style="max-width: 75%; height: auto;">
-  <i style ="max-width: 50%; height: auto;" >We first want to create an HTTP request connecting to the OpenWeather API (<a>https://openweathermap.org/history</a>).</i> 
-  </div>
-<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
-  <img src="images\postman api.png"  style="max-width: 75%; height: auto;">
-  <i style ="max-width: 50%; height: auto;" >We then specify the historical weather API (https://api.openweathermap.org/data/2.5/weather). We then specify the above parameters for the API call. Ensure that the start, end unix timestamps only range for around a week long.</i> 
-  </div>
-<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex-wrap: wrap; text-align: center;">
-  <img src="images\postman output.png"  style="max-width: 75%; height: auto;">
-  <i style ="max-width: 50%; height: auto;" >You can then explore the output if correctly called.</i> 
-  </div>
-
 
 ##### Copy Data Activity Setup
 1. We must first create a source dataset connection which either uses REST or HTTP. The base URL will be referencing the openweathermap api (http://api.openweathermap.org/).
