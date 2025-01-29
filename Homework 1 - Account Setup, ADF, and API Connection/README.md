@@ -146,8 +146,7 @@ After creating a new Activity in the pipeline orchestration menu, you can click 
   <img src="images\linked service +new.png"  style="max-width: 50%; height: auto;">
   <i style ="max-width: 50%; height: auto;" ></i>
   </div>
->💡 
-[Linked services](https://learn.microsoft.com/en-us/azure/data-factory/concepts-linked-services?tabs=data-factory) refer to connections to external resources/services, enabling the platform to interact with those sources. The true power of linked services comes from their *reusability in different pipelines/dataflows.*
+>💡 [Linked services](https://learn.microsoft.com/en-us/azure/data-factory/concepts-linked-services?tabs=data-factory) refer to connections to external resources/services, enabling the platform to interact with those sources. The true power of linked services comes from their *reusability in different pipelines/dataflows.*
 For example, if you are copying data from an Azure SQL Database to an Azure Blob Storage, linked services must be first defined for the SQL Database and for the Azure Blob Storage. After creating these services, if you need to reference those same datasets for different transformations/dataflows, you can just reference the created linked services instead of making the connections from scratch again.
 We will be creating ADF linked services for all resources we will be using. 
 
