@@ -170,7 +170,8 @@ data/2.5/air_pollution/history?lat=@{dataset().lat}&lon=@{dataset().lon}&start=@
   <img src="images\openweather relative url.png"  style="max-width: 75%; height: auto;">
   <i style ="max-width: 50%; height: auto;" ></i>
   </div>
-
+>💡
+  The above screenshot shows an example Historical Weather API call. You would need to modify the base & relative URL for the historical weather API connection to match this API call.
 >💡
 Notice the similarities between the API documentation and the Azure API call.
 The `@{dataset()}` function in Azure Data Factory (ADF) is used within a dataset to access parameters defined in that dataset. This allows you to create dynamic datasets that can change based on the input parameters passed to them from the pipeline. 
