@@ -1,4 +1,4 @@
-# HW1: Azure Account Setup & API Connection
+# HW2: Azure Account Setup & API Connection
 
 ## Part 1: Azure Account Setup
 **Objective:**
