@@ -26,12 +26,12 @@ The report must have detailed insights into the dataset, and students should hav
 **For this homework specifically**, you will be utilizing Synapse's spark cluster to run python noteboooks on the cloud.
 >![alt text](images/image-2.png)
 
-![alt text](images/images/image2.png)
+![alt text](images/image2.png)
 
-![alt text](images/images/image.png)
+![alt text](images/image.png)
 Make sure to select the data lake (storage account) you previously created that hosts your ingested batch data (from the first homework).
 
-![alt text](images/images/image-1.png)
+![alt text](images/image-1.png)
 Set the username to **sqladminuser** and password to **sqladminpassword123#** for now. We will utilize the SQL pool in future homeworks when preparing external tables for powerBI access. 
 Ignore the networking tab for now and **review and create** the synapse workspace.
 
