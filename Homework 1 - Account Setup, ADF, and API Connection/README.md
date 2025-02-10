@@ -161,7 +161,7 @@ Before REST connector becomes available for an API, you may use the HTTP connect
 [Anonymous authentication](https://learn.microsoft.com/en-us/iis/configuration/system.webserver/security/authentication/anonymousauthentication) allows users to access resources or applications without providing any identity verification (e.g., username or password). It is typically used for public-facing applications or websites where user identity is not necessary for basic access.
 
 ##### Copy Data Activity Setup
-1. We must first create a source dataset connection which either uses REST or HTTP. The base URL will be referencing the openweathermap api (http://api.openweathermap.org/).
+1. We must first create a source dataset connection which either uses REST or HTTP. The base URL will be referencing the openweathermap api (http://api.openweathermap.org/ for air pollution, http://history.openweathermap.org/ for historical weather).
 2. We then use a relative URL, which defines resource paths without including the full URL, simplifying code and configurations:
 ```
 data/2.5/air_pollution/history?lat=@{dataset().lat}&lon=@{dataset().lon}&start=@{dataset().start}&end=@{dataset().end}&appid=@{dataset().appid}
