@@ -57,7 +57,7 @@ Click **Review and create** , then click **create**.
 
 #### 3. Create a Synapse Notebook Environment
 Now that we have created a spark cluster, we have the compute neccessary to run Python Notebooks within synapse. Let's create a notebook within Synapse. **Open Synapse Workspace and navigate to the following menu:**
-![alt text](images/images/image-a.png)
+![alt text](images/image-a.png)
 ![alt text](images/image-8.png)
 >💡 ***What is PySpark?*   
 >[PySpark](https://learn.microsoft.com/en-us/azure/databricks/pyspark/)** is the Python API for Apache Spark, an open-source distributed computing system that enables large-scale data processing. PySpark allows you to use Python to interact with Spark’s capabilities, such as in-memory data processing, distributed machine learning, and graph processing. It's commonly used for big data analytics, enabling you to process large datasets efficiently across a cluster of machines. PySpark integrates seamlessly with other big data tools, including Hadoop, and is widely used in data engineering, data science, and machine learning projects
