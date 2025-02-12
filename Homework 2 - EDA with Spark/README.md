@@ -2,7 +2,7 @@
 
 **Objective:**
 
-Using the notebook environment in Synapse Analytics, connect to storage and perform an exploratory data analysis (EDA) on the historical weather and air pollution data processed in Homework 1. This involves directly connecting to your respective storage account, visualizing the data, identifying patterns, and preparing insights for further analysis. Students have full freedom to run any EDA code to discover the data. However, the criteria instructors inspect is: 
+Using the notebook environment in Synapse Analytics Serverless Spark Cluster, connect to storage and perform an exploratory data analysis (EDA) on the historical weather and air pollution data processed in Homework 1. This involves directly connecting to your respective storage account, visualizing the data, identifying patterns, and preparing insights for further analysis. Students have full freedom to run any EDA code to discover the data. However, the criteria instructors inspect is: 
 - check the distribution of data
 - run a correlation matrix to compare all the variables including between the two datasets
 - perform time series analysis. 
