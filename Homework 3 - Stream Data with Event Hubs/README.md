@@ -263,6 +263,8 @@ Event Hubs and Apache Kafka are extremely interchangeable (since Event Hubs was 
 
 ### 6. Pause/Disable Resources for Now
 By this point, hopefully you were able to view events being processed by your Event Hubs!
+![alt text](images/image-13.png)
+
 - Take a screenshot of Event Hub activity showing at least 2 requests and messages during a 2 hour period (Must be around 1 hour apart)
 - In the Azure Portal, navigate to your Function App.
 - Click on the “Stop” button to stop the function app from running.
