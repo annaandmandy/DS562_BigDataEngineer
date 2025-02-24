@@ -9,6 +9,7 @@ What instructors are looking for:
 - Event Hubs was able to process events from the Open Weather API
     - we expect to see a screenshot of the activity on Gradescope
 
+
 Before you write any code, make sure **VScode** is up to date!
 
 ### Steps:
@@ -261,6 +262,7 @@ Event Hubs and Apache Kafka are extremely interchangeable (since Event Hubs was 
     4. **Start the Functions App**
 
 ### 6. Pause/Disable Resources for Now
+By this point, hopefully you were able to view events being processed by your Event Hubs!
 - Take a screenshot of Event Hub activity showing at least 2 requests and messages during a 2 hour period (Must be around 1 hour apart)
 - In the Azure Portal, navigate to your Function App.
 - Click on the “Stop” button to stop the function app from running.
