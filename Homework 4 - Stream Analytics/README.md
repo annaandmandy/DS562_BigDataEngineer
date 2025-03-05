@@ -2,7 +2,7 @@
 
 **Objective:**
 
-Set up a real-time data processing pipeline using Azure Stream Analytics to store real-time weather and air pollution data from Azure Event Hubs. The goal is to ensure the real-time data matches the format of the historical data ingested in HW2. The raw data will be stored in the Bronze layer of Azure Data Lake Storage.
+Set up a real-time data processing pipeline using Azure Stream Analytics to store real-time weather and air pollution data from Azure Event Hubs. The goal is to have the data will be processed on the fly and sent into PowerBI for a live dashboard.
 
 >💡 ***What is Azure Stream Analytics?***
 [Azure Stream Analytics](https://learn.microsoft.com/en-us/azure/stream-analytics/) is a real-time analytics service provided by Microsoft Azure that is designed to process and analyze streaming data from various sources such as IoT devices, applications, sensors, logs, and social media. It enables you to develop and deploy real-time analytics solutions that can ingest large volumes of data and provide insights within seconds to minutes. In this homework, Azure Stream Analytics is being used to process and analyze real-time weather and air pollution data that is being ingested from Azure Event Hubs. The key objectives for using Azure Stream Analytics in this scenario include:
@@ -17,7 +17,7 @@ Set up a real-time data processing pipeline using Azure Stream Analytics to stor
 - **Create a Stream Analytics Job**:
     - **Streaming Units**: Set to 1/3 to save costs.
     >💡 **Streaming Units** determine the processing resources available to your Stream Analytics job, including CPU and memory. A higher number of SUs allows your job to handle more data and more complex queries, but will increase the cost.
-    
+
 If you created a Stream Analytics job with **streaming units with N**, it will be billed **$0.11 * N/hour**.
 
 ### 2. Configure Inputs for the Stream Analytics Job
@@ -83,7 +83,7 @@ SELECT * INTO ["Output alias for PowerBI"] FROM FlattenedWeather;
 >💡 If you created a debugging data file in HW3, you can upload that same data file as **sample input** to be used for output testing.
 
 ### 5. Start the Azure Function App and Enable Event Hubs
-- Navigate to your Function App created in HW7.
+- Navigate to your Function App 
 - Click on the "Start" button to start the function app.
 - Ensure that the Function App is running and ingesting data into the Event Hub.
 
@@ -103,7 +103,7 @@ The SQL-like queries you have defined in your Stream Analytics job are now activ
 4. If Event Hubs + Stream Analytics was done correctly, the name of your dataset should appear **automatically**
 ![alt text](images/image-5.png)
 5. Begin to create visualizations. Remember that for time series data it requires the timestamp to be correctly identified. The provided SQL query should do this for you.
-6. Watch the visualization update in real time!
+6. Watch the visualization update in real time! Best dashboard gets displayed in discussion :) 
 ![alt text](images/image-6.png)
 
 
