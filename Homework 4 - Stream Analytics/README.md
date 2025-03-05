@@ -51,6 +51,7 @@ If you created a Stream Analytics job with **streaming units with N**, it will 
     - Click "Save."
 
 ### 4. Configure Query for the Stream Analytics Job
+Feel free to add more fields you wish to visualize. The below fields are a small example of what you could pull from the data being streamed into event hubs (remember that both air pollution and weather data are being streamed together).
 ```sql
     WITH FlattenedWeather AS (
     SELECT
