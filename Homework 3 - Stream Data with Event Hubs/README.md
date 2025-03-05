@@ -133,7 +133,7 @@ Event Hubs and Apache Kafka are extremely interchangeable (since Event Hubs was 
         # Define your Event Hub connection details
         connection_str = os.getenv("EVENT_HUB_CONNECTION_STRING")
 
-        eventhub_name = 
+        eventhub_name = "" #name of your instance
 
         # Define your OpenWeather API key and endpoints
         api_key = ""
@@ -184,7 +184,6 @@ Event Hubs and Apache Kafka are extremely interchangeable (since Event Hubs was 
                 est_time = utc_time.astimezone(est_timezone).isoformat()
 
                 logging.info("Starting function execution...")
-                api_key = get_api_key()
                 lat, lon = 42.3601, -71.0589  # Coordinates for Boston
 
                 logging.info("Fetching weather data...")
