@@ -1,13 +1,12 @@
-# HW3: Event Hubs and Azure Functions
+# HW4: Event Hubs and Azure Functions
+
+- powerbi from your subscription
+- 
+
 
 **Objective:**
 
-Ingest real-time weather and air pollution data from the OpenWeather APIs into Azure Event Hubs using Azure Functions. This involves setting up an Event Hubs namespace and event hub, creating an Azure Function to fetch real-time data and send it to Event Hubs, and verifying the data ingestion process. 
-What instructors are looking for:
-- correctly setup Event Hubs namespace and instance
-- properly connected Azure Functions App w/ Event Hubs
-- Event Hubs was able to process events from the Open Weather API
-    - we expect to see a screenshot of the activity on Gradescope
+Set up a real-time data processing pipeline using Azure Stream Analytics to store real-time weather and air pollution data from Azure Event Hubs. The goal is to ensure the real-time data matches the format of the historical data ingested in HW2. The raw data will be stored in the Bronze layer of Azure Data Lake Storage.
 
 
 Before you write any code, make sure **VScode** is up to date!
