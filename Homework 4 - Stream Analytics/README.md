@@ -39,11 +39,12 @@ If you created a Stream Analytics job with **streaming units with N**, it will 
 
 
 ### 3. Configure Outputs for the Stream Analytics Job
-**Create Two Outputs (Data Lake Storage Gen 2) for Historical Weather and Historical Air Pollution data respectively.**
+**Create an Outputs (PowerBI) for Historical Weather and Historical Air Pollution data.**
 - In the left menu, select "Outputs" under the "Job topology" section.
 - Click "+ Add" and select "Power BI."
 - Configure the output with the following details:
     - **Output alias**: [insert here]
+          - This is just the name of what shows up in Stream Analytics
     - **Subscription**: Select your subscription.
     - **Dataset Name**: Name your dataset to be reflected in PowerBI.
     - **Table Name**: [insert here]
