@@ -117,3 +117,6 @@ The SQL-like queries you have defined in your Stream Analytics job are now activ
     - Navigate to the "Overview" section of your Stream Analytics job.
     - Click "Stop" to stop the job from running.
     ![alt text](image-1.png)
+
+### 9. Submit PowerBI screenshot to Gradescope
+- **Include your Profile + BU Email in the top right corner**
