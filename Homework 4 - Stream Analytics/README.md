@@ -40,15 +40,15 @@ If you created a Stream Analytics job with **streaming units with N**, it will 
 
 ### 3. Configure Outputs for the Stream Analytics Job
 **Create Two Outputs (Data Lake Storage Gen 2) for Historical Weather and Historical Air Pollution data respectively.**
-    - In the left menu, select "Outputs" under the "Job topology" section.
-    - Click "+ Add" and select "Power BI."
-    - Configure the output with the following details:
-        - **Output alias**: [insert here]
-        - **Subscription**: Select your subscription.
-        - **Dataset Name**: Name your dataset to be reflected in PowerBI.
-        - **Table Name**: [insert here]
-        - **Event Serialization Format**: JSON.
-    - Click "Save."
+- In the left menu, select "Outputs" under the "Job topology" section.
+- Click "+ Add" and select "Power BI."
+- Configure the output with the following details:
+    - **Output alias**: [insert here]
+    - **Subscription**: Select your subscription.
+    - **Dataset Name**: Name your dataset to be reflected in PowerBI.
+    - **Table Name**: [insert here]
+    - **Event Serialization Format**: JSON.
+- Click "Save."
 
 ### 4. Configure Query for the Stream Analytics Job
 Feel free to add more fields you wish to visualize. The below fields are a small example of what you could pull from the data being streamed into event hubs (remember that both air pollution and weather data are being streamed together).
