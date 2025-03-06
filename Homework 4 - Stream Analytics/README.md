@@ -1,4 +1,4 @@
-# HW3: Event Hubs and Azure Functions
+# HW4: Stream Analytics
 
 **Objective:**
 
