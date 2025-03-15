@@ -39,7 +39,7 @@ If you created a Stream Analytics job with **streaming units with N**, it will 
 
 
 ### 3. Configure Outputs for the Stream Analytics Job
-**Create an Outputs (PowerBI) for Historical Weather and Historical Air Pollution data.**
+**Create a PowerBI Output (you only need one output since the data is combined) for Historical Weather and Historical Air Pollution data.**
 - In the left menu, select "Outputs" under the "Job topology" section.
 - Click "+ Add" and select "Power BI."
 - Configure the output with the following details:
