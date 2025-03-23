@@ -1,4 +1,4 @@
-# HW3: Event Hubs and Azure Functions
+# HW4: Stream Analytics
 
 **Objective:**
 
@@ -39,16 +39,17 @@ If you created a Stream Analytics job with **streaming units with N**, it will 
 
 
 ### 3. Configure Outputs for the Stream Analytics Job
-**Create Two Outputs (Data Lake Storage Gen 2) for Historical Weather and Historical Air Pollution data respectively.**
-    - In the left menu, select "Outputs" under the "Job topology" section.
-    - Click "+ Add" and select "Power BI."
-    - Configure the output with the following details:
-        - **Output alias**: [insert here]
-        - **Subscription**: Select your subscription.
-        - **Dataset Name**: Name your dataset to be reflected in PowerBI.
-        - **Table Name**: [insert here]
-        - **Event Serialization Format**: JSON.
-    - Click "Save."
+**Create a PowerBI Output (you only need one output since the data is combined) for Historical Weather and Historical Air Pollution data.**
+- In the left menu, select "Outputs" under the "Job topology" section.
+- Click "+ Add" and select "Power BI."
+- Configure the output with the following details:
+    - **Output alias**: [insert here]
+          - This is just the name of what shows up in Stream Analytics
+    - **Subscription**: Select your subscription.
+    - **Dataset Name**: Name your dataset to be reflected in PowerBI.
+    - **Table Name**: [insert here]
+    - **Event Serialization Format**: JSON.
+- Click "Save."
 
 ### 4. Configure Query for the Stream Analytics Job
 Feel free to add more fields you wish to visualize. The below fields are a small example of what you could pull from the data being streamed into event hubs (remember that both air pollution and weather data are being streamed together).
@@ -117,3 +118,6 @@ The SQL-like queries you have defined in your Stream Analytics job are now activ
     - Navigate to the "Overview" section of your Stream Analytics job.
     - Click "Stop" to stop the job from running.
     ![alt text](image-1.png)
+
+### 9. Submit PowerBI screenshot to Gradescope
+- **Include your Profile + BU Email in the top right corner**
