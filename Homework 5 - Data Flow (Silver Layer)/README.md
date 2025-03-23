@@ -214,7 +214,7 @@ For `weather_description`, `weather_icon`, `weather_main`, and `weather_id`, the
     
 - **Screenshot of Monitor Tab:** A screenshot showing the successful run of the pipelines in the Monitor tab.
     
-    ![alt text](images/image-7.png)
+    ![alt text](images/image-11.png)
     
 - **Screenshot of Data in Azure Data Lake Storage (Silver Layer):** A screenshot showing the cleaned and transformed data stored in the Silver layer.
     
