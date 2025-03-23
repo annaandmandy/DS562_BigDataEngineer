@@ -196,13 +196,12 @@ A [dataflow](https://www.notion.so/81190f6b2f7d4572bde3903b1e47c7e6?pvs=21) in A
 1. **Trigger the Pipelines**
 2. **Monitor the Pipeline Run**
 
-### Additional Information:
-
-For `weather_description`, `weather_icon`, `weather_main`, and `weather_id`, the values can be extracted from strings formatted like `weather_id[1]: 804`. Use string manipulation functions to extract the value after `': '`. This information can be used for visualization later as explained on the OpenWeatherMap [weather conditions](https://openweathermap.org/
-weather-conditions) page.
+### Debugging
+Feel free to **debug** your workflows for troubleshooting. Keep in mind that debugging is somewhat costly, so use it responsibly.
 
 ### Additional Information:
-For `weather_description`, `weather_icon`, `weather_main`, and `weather_id`, the values can be extracted from strings formatted like `weather_id[1]: "..."`. Use string manipulation functions to extract the value after `': '`. This information can be used for visualization later as explained on the OpenWeatherMap [weather conditions](https://openweathermap.org/weather-conditions) page.
+
+For `weather_description`, `weather_icon`, `weather_main`, and `weather_id`, the values can be extracted from strings formatted like `weather_id[1]: 804`. Use string manipulation functions to extract the value after `': '`. This information can be used for visualization later as explained on the OpenWeatherMap [weather conditions](https://openweathermap.org/weather-conditions) page.
 
 ### Deliverables:
 
