@@ -137,16 +137,16 @@ A [dataflow](https://www.notion.so/81190f6b2f7d4572bde3903b1e47c7e6?pvs=21) in A
         - `feels_like` -> `feels_like_K`
         - `temp_min` -> `temp_min_K`
         - `temp_max` -> `temp_max_K`
-    - "Drop" the following columns:
+    - Feel free to "drop" the following columns (since this information would already exist/be redundant)
         - `timestamp`
         - `calctime`
         - `cod`
         - `message`
         - `cnt`
         - `city_id`
-        - `weather_description`
-        - `weather_icon`
-        - `weather_id`
+        - `weather_description` #if you didnt create a derived column for it
+        - `weather_icon` #if you didnt create a derived column for it
+        - `weather_id` #if you didnt create a derived column for it
         - `weather_main`
 8. **Sink Transformation:**
     - Add a sink transformation to write the processed data to the Silver layer in Azure Data Lake Storage.
