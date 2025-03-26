@@ -131,13 +131,13 @@ A [dataflow](https://www.notion.so/81190f6b2f7d4572bde3903b1e47c7e6?pvs=21) in A
             
     
 6. **Select Transformation to Rename and Drop Unnecessary Columns:**
-        - Add a Select transformation to rename the temperature columns and drop unnecessary columns. Please note that we are only dropping the duplicated column values based on our transformations above. If you didn't create weather_description_value for example, you wouldn't drop weather_description. 
+        - Add a Select transformation to rename the temperature columns and "drop" unnecessary columns. Please note that we are only dropping the duplicated column values based on our transformations above. If you didn't create weather_description_value for example, you wouldn't drop weather_description. 
     - Rename columns:
         - `temp` -> `temp_K`
         - `feels_like` -> `feels_like_K`
         - `temp_min` -> `temp_min_K`
         - `temp_max` -> `temp_max_K`
-    - Drop the following columns:
+    - "Drop" the following columns:
         - `timestamp`
         - `calctime`
         - `cod`
