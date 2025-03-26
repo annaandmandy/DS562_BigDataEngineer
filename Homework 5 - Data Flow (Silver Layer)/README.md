@@ -110,8 +110,6 @@ A [dataflow](https://www.notion.so/81190f6b2f7d4572bde3903b1e47c7e6?pvs=21) in A
         - **`temp_min_C`** → Convert `temp_min` from Kelvin to Celsius, and round this value.
         - **`temp_max_C`** → Convert `temp_max` from Kelvin to Celsius, and round this value.
         - **`feels_like_C`** → Convert and round `feels_like` to Celsius.
-        - **`temp_min_C`** → Convert and round `temp_min` to Celsius.
-        - **`temp_max_C`** → Convert and round `temp_max` to Celsius.
         - **`feels_like_F`** → Convert and round `feels_like` to Fahrenheit.
         - **`temp_min_F`** → Convert and round `temp_min` to Fahrenheit.
         - **`temp_max_F`** → Convert and round `temp_max` to Fahrenheit
