@@ -131,7 +131,7 @@ A [dataflow](https://www.notion.so/81190f6b2f7d4572bde3903b1e47c7e6?pvs=21) in A
             
     
 6. **Select Transformation to Rename and Drop Unnecessary Columns:**
-        - Add a Select transformation to rename the temperature columns and drop unnecessary columns:
+        - Add a Select transformation to rename the temperature columns and drop unnecessary columns. Please note that we are only dropping the duplicated column values based on our transformations above. If you didn't create weather_description_value for example, you wouldn't drop weather_description. 
     - Rename columns:
         - `temp` -> `temp_K`
         - `feels_like` -> `feels_like_K`
@@ -148,7 +148,7 @@ A [dataflow](https://www.notion.so/81190f6b2f7d4572bde3903b1e47c7e6?pvs=21) in A
         - `weather_icon`
         - `weather_id`
         - `weather_main`
-7. **Sink Transformation:**
+8. **Sink Transformation:**
     - Add a sink transformation to write the processed data to the Silver layer in Azure Data Lake Storage.
     - File Format: Parquet
         >💡 ***What is Parquet?***
