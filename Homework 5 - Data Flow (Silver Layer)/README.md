@@ -117,7 +117,7 @@ A [dataflow](https://www.notion.so/81190f6b2f7d4572bde3903b1e47c7e6?pvs=21) in A
             >💡 Boston Coordinates are latitude= 42.3601, longitude = -71.0589
         - **`weather_id_value`** → Extract and convert the weather ID from a string to an integer.
         - **`weather_main_value`, `weather_description_value`, `weather_icon_value`** → Extract specific weather details from strings.
-            >💡 For each of these fields, you first need to access the corresponding value from the original API response. Since the data may be nested or part of a more complex string, you'll isolate the identifying value by using string manipulation techniques, such as `split` to divide the string at a specific delimiter, and then selecting the relevant part. Finally, convert or format the value as needed (e.g., converting a string to an integer with `toInteger()`).
+            >💡 [POTENTIALLY OPTIONAL] For each of these fields, you first need to access the corresponding value from the original API response. Since the data may be nested or part of a more complex string, you'll isolate the identifying value by using string manipulation techniques, such as `split` to divide the string at a specific delimiter, and then selecting the relevant part. Finally, convert or format the value as needed (e.g., converting a string to an integer with `toInteger()`). However, if your data is automatically the value and not the key-value pair, then you can just ingest the value without the string manipulation.
                 Here is the code to get you started:
                 [Link to Example API Output](https://openweathermap.org/weather-conditions)
                 - **`toString(weather_id[1])`**: Convert the value in the `weather_id` array to a string.
