@@ -110,16 +110,15 @@ A [dataflow](https://www.notion.so/81190f6b2f7d4572bde3903b1e47c7e6?pvs=21) in A
         - **`temp_min_C`** → Convert `temp_min` from Kelvin to Celsius, and round this value.
         - **`temp_max_C`** → Convert `temp_max` from Kelvin to Celsius, and round this value.
         - **`feels_like_C`** → Convert and round `feels_like` to Celsius.
-        - **`temp_min_C`** → Convert and round `temp_min` to Celsius.
-        - **`temp_max_C`** → Convert and round `temp_max` to Celsius.
-        - **`feels_like_F`** → Convert and round `feels_like` to Fahrenheit.       
+        - **`feels_like_F`** → Convert and round `feels_like` to Fahrenheit.
+>>>>>>> 5064f0ba2765355a052d0d3136793d369212fbf6
         - **`temp_min_F`** → Convert and round `temp_min` to Fahrenheit.
         - **`temp_max_F`** → Convert and round `temp_max` to Fahrenheit
         - **`lon`** & **`lat`** → Assign fixed longitude and latitude values(Boston)
             >💡 Boston Coordinates are latitude= 42.3601, longitude = -71.0589
         - **`weather_id_value`** → Extract and convert the weather ID from a string to an integer.
         - **`weather_main_value`, `weather_description_value`, `weather_icon_value`** → Extract specific weather details from strings.
-            >💡 For each of these fields, you first need to access the corresponding value from the original API response. Since the data may be nested or part of a more complex string, you'll isolate the identifying value by using string manipulation techniques, such as `split` to divide the string at a specific delimiter, and then selecting the relevant part. Finally, convert or format the value as needed (e.g., converting a string to an integer with `toInteger()`).
+            >💡 [POTENTIALLY OPTIONAL] For each of these fields, you first need to access the corresponding value from the original API response. Since the data may be nested or part of a more complex string, you'll isolate the identifying value by using string manipulation techniques, such as `split` to divide the string at a specific delimiter, and then selecting the relevant part. Finally, convert or format the value as needed (e.g., converting a string to an integer with `toInteger()`). However, if your data is automatically the value and not the key-value pair, then you can just ingest the value without the string manipulation.
                 Here is the code to get you started:
                 [Link to Example API Output](https://openweathermap.org/weather-conditions)
                 - **`toString(weather_id[1])`**: Convert the value in the `weather_id` array to a string.
@@ -133,24 +132,24 @@ A [dataflow](https://www.notion.so/81190f6b2f7d4572bde3903b1e47c7e6?pvs=21) in A
             
     
 6. **Select Transformation to Rename and Drop Unnecessary Columns:**
-        - Add a Select transformation to rename the temperature columns and drop unnecessary columns:
+        - Add a Select transformation to rename the temperature columns and "drop" unnecessary columns. Please note that we are only dropping the duplicated column values based on our transformations above. If you didn't create weather_description_value for example, you wouldn't drop weather_description. 
     - Rename columns:
         - `temp` -> `temp_K`
         - `feels_like` -> `feels_like_K`
         - `temp_min` -> `temp_min_K`
         - `temp_max` -> `temp_max_K`
-    - Drop the following columns:
+    - Feel free to "drop" the following columns (since this information would already exist/be redundant)
         - `timestamp`
         - `calctime`
         - `cod`
         - `message`
         - `cnt`
         - `city_id`
-        - `weather_description`
-        - `weather_icon`
-        - `weather_id`
+        - `weather_description` #if you didnt create a derived column for it
+        - `weather_icon` #if you didnt create a derived column for it
+        - `weather_id` #if you didnt create a derived column for it
         - `weather_main`
-7. **Sink Transformation:**
+8. **Sink Transformation:**
     - Add a sink transformation to write the processed data to the Silver layer in Azure Data Lake Storage.
     - File Format: Parquet
         >💡 ***What is Parquet?***
