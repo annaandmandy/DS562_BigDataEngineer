@@ -112,7 +112,7 @@ A [dataflow](https://www.notion.so/81190f6b2f7d4572bde3903b1e47c7e6?pvs=21) in A
         - **`feels_like_C`** → Convert and round `feels_like` to Celsius.
         - **`temp_min_C`** → Convert and round `temp_min` to Celsius.
         - **`temp_max_C`** → Convert and round `temp_max` to Celsius.
-        - **`feels_like_F`** → Convert and round `feels_like` to Fahrenheit.
+        - **`feels_like_F`** → Convert and round `feels_like` to Fahrenheit.       
         - **`temp_min_F`** → Convert and round `temp_min` to Fahrenheit.
         - **`temp_max_F`** → Convert and round `temp_max` to Fahrenheit
         - **`lon`** & **`lat`** → Assign fixed longitude and latitude values(Boston)
