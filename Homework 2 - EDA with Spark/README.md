@@ -66,6 +66,18 @@ Now we need to setup our Python script to access the data stored within our data
 
 1. **Set up Access to Azure Data Lake Storage (ADLS):**
     - In your Databricks notebook, configure access to your ADLS account using the storage account name and key.
+  
+        ```python
+        # Set up the configuration for accessing the storage account
+        storage_account_name = ""
+        storage_account_key = ""
+
+        spark.conf.set(
+            "fs.azure.account.key." + storage_account_name + ".dfs.core.windows.net",
+            storage_account_key
+        )
+
+        ```
         
         ```python
         # Set up the configuration for accessing the storage account
