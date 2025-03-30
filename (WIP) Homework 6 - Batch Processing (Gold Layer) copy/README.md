@@ -155,8 +155,8 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     Each key in the dictionary corresponds to a specific pollutant and its measurement duration (e.g., Ozone over 8 hours, PM2.5 over 24 hours, etc.).
     
     The formula ***((Ihigh - Ilow) / (Chigh - Clow)) * (concentration - Clow) + Ilow*** is used to map a pollutant's measured concentration to an AQI value that represents the potential health risk to the public. This allows for a continuous scale where *pollutant levels can be accurately associated with an AQI that fits within predefined health categories*. Here's a breakdown of the formula:
-    
-    ![images/aqi2.png]
+
+    ![alt text](images/aqi2.png)
     
     - **`(Ihigh - Ilow) / (Chigh - Clow)`**: This calculates the slope of the AQI scale over the concentration range.
     - **`(concentration - Clow)`**: This represents how far the given concentration is from the lower bound of the concentration range.
@@ -165,7 +165,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     
     *Breakpoints visualized:*
     
-    ![images/breakpoints.png]
+    ![alt text](images/breakpoints.png)
     
     </aside>
     
@@ -264,7 +264,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
 
 - **Recalculation Explained**
     
-    ![images/api.png]
+    ![alt text](images/api.png)
     
     ### Air Quality Index (AQI) Recalculation
     
@@ -275,7 +275,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     2. **Piecewise Linear Function**:
         - The AQI is calculated using a piecewise linear function:
             
-            ![images/aqi.png]
+            ![alt text](images/aqi.png)
             
         - Where:
             - \( I \) is the AQI,
