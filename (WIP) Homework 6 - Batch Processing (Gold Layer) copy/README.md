@@ -41,7 +41,17 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     
     **`{container}`**: This placeholder will be replaced by the name of the blob **container** you want to access. A container in Azure Blob Storage is similar to a directory where blobs (files) are stored.
     
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/e15e8fb3-2e6b-4b4a-8c79-415e661c4bfd/d5fe9ce4-e5c3-4d02-894f-16466b346848/image.png)
+    ```python
+    # Read data directly from ADLS Gen2
+    container_name = ""
+    air_pollution_folder_path = ""  # Folder, not a single file
+    historical_weather_folder_path = ""
+
+    # Read all JSON files in the folder
+    air_pollution_df = spark.read.json(f"abfss://{container_name}@{storage_account_name}.dfs.core.windows.net/{air_pollution_folder_path}")
+    historical_weather_df = spark.read.json(f"abfss://{container_name}@{storage_account_name}.dfs.core.windows.net/{historical_weather_folder_path}")
+    # Show the DataFrame
+    ```
     
     `{mount_name}` placeholder will be replaced with the actual name you want to use for this mount point, which is the directory in your local file system where an external storage resource (like Azure Blob Storage, in this case) is made accessible.
     
