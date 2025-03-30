@@ -156,7 +156,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     
     The formula ***((Ihigh - Ilow) / (Chigh - Clow)) * (concentration - Clow) + Ilow*** is used to map a pollutant's measured concentration to an AQI value that represents the potential health risk to the public. This allows for a continuous scale where *pollutant levels can be accurately associated with an AQI that fits within predefined health categories*. Here's a breakdown of the formula:
     
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/e15e8fb3-2e6b-4b4a-8c79-415e661c4bfd/0d63e645-fdfd-42bf-b599-9588a52f9787/image.png)
+    ![aqi2.png]
     
     - **`(Ihigh - Ilow) / (Chigh - Clow)`**: This calculates the slope of the AQI scale over the concentration range.
     - **`(concentration - Clow)`**: This represents how far the given concentration is from the lower bound of the concentration range.
@@ -165,7 +165,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     
     *Breakpoints visualized:*
     
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/e15e8fb3-2e6b-4b4a-8c79-415e661c4bfd/a071e3c0-d7d0-4e65-b269-aae6e6cf8506/image.png)
+    ![breakpoints.png]
     
     </aside>
     
@@ -264,7 +264,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
 
 - **Recalculation Explained**
     
-    ![Screenshot 2024-07-17 at 3.11.34 PM.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/e15e8fb3-2e6b-4b4a-8c79-415e661c4bfd/f49efa64-13a9-4fe8-a133-9d1c29845181/Screenshot_2024-07-17_at_3.11.34_PM.png)
+    ![api.png]
     
     ### Air Quality Index (AQI) Recalculation
     
@@ -275,7 +275,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     2. **Piecewise Linear Function**:
         - The AQI is calculated using a piecewise linear function:
             
-            ![Screenshot 2024-07-17 at 3.10.50 PM.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/e15e8fb3-2e6b-4b4a-8c79-415e661c4bfd/2fcf9e80-9eef-485d-9332-c78a2741c126/Screenshot_2024-07-17_at_3.10.50_PM.png)
+            ![aqi.png]
             
         - Where:
             - \( I \) is the AQI,
