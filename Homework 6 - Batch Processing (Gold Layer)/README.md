@@ -10,8 +10,6 @@
 - Transformations: In Spark you express processing logic as transformations, which are instructions for loading and manipulating data using DataFrames. Common transformations include reading data, joins, aggregations, and type casting.
 - **Lazy Evaluation**: Spark optimizes data processing by identifying the most efficient physical plan to evaluate logic specified by transformations. However, Spark does not act on transformations until actions are called. Rather than evaluating each transformation in the exact order specified, Spark *waits until an action triggers computation on all transformations*. Spark handles their execution in a deferred manner, rather than immediately executing them when they are defined.
 
-![alt text](image.png)
-
 >
 💡 ***What is PySpark?*   [PySpark](https://learn.microsoft.com/en-us/azure/databricks/pyspark/)** is the Python API for Apache Spark, an open-source distributed computing system that enables large-scale data processing. PySpark allows you to use Python to interact with Spark’s capabilities, such as in-memory data processing, distributed machine learning, and graph processing. It's commonly used for big data analytics, enabling you to process large datasets efficiently across a cluster of machines. PySpark integrates seamlessly with other big data tools, including Hadoop, and is widely used in data engineering, data science, and machine learning projects
 
