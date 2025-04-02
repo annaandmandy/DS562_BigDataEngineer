@@ -2,7 +2,7 @@
 
 **Tools**: Azure Synapse, PySpark, Azure Data Lake Storage
 
-
+mo
 💡 ***What is Apache Spark?*
 [Apache Spark](https://learn.microsoft.com/en-us/azure/databricks/spark/)** is an open-source, distributed processing system designed for big data workloads. It provides *in-memory computing*, which speeds up data processing tasks, etc. It is the underlying distributed data processing engine used by Synapse, which is a cloud-based platform that provides a collaborative environment for data engineering, data science, and machine learning. When you deploy a compute cluster or SQL warehouse on Azure Synapse, Apache Spark is configured and deployed to virtual machines. You don’t need to configure or initialize a [Spark context or Spark session](https://www.notion.so/HW7-Batch-Processing-c41cbdf25444472aa84f9680514868df?pvs=21), as these are managed for you by Azure. It uses lazy evaluation to process transformations and actions defined with DataFrames.
 
@@ -51,15 +51,6 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     # Show the DataFrame
     ```
     
-    `{mount_name}` placeholder will be replaced with the actual name you want to use for this mount point, which is the directory in your local file system where an external storage resource (like Azure Blob Storage, in this case) is made accessible.
-    
-    ```jsx
-    Example: mount_name = "processed_data" (If the container is used 
-    for data that has been cleaned or processed.)
-    ```
-    
-    </aside>
-    
     ```python
     # Set up the configuration for accessing the storage account
     storage_account_name = "your_storage_account_name"
@@ -86,10 +77,10 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     
     ```python
     # Load the weather data from the silver layer
-    weather_df = spark.read.parquet(f"/mnt/{mount_name}/silver/silver_weather_historical.parquet")
+    weather_df = spark.read.parquet(f"abfss://<container-name>@<storage-account-name>.dfs.core.windows.net/<path-to-file>")
     
     # Load the air pollution data
-    air_pollution_df = spark.read.parquet(f"/mnt/{mount_name}/silver/silver_airpollution_historical.parquet")
+    air_pollution_df =  spark.read.parquet(f"abfss://<container-name>@<storage-account-name>.dfs.core.windows.net/<path-to-file>")
     
     ```
     
