@@ -458,7 +458,3 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
 1. **Exported Synapse Notebook HTML and attach**
 2. **Screenshot of Data in Azure Data Lake Storage**
     ![alt text](images/data.png)
-    
-3. **Screenshot of Terminated Cluster**
-    
-    ![alt text](images/cluster.png)
