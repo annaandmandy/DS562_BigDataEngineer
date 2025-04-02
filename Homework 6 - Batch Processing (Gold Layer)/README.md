@@ -389,6 +389,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     
     ```python
     # Save aggregated data as single files
+    # can modify this to go directly to your directories
     weather_agg_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/agg_weather")
     weather_condition_counts_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/agg_weather_conditions")
     temp_extremes_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/agg_temp_extremes")
