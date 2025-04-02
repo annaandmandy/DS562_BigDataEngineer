@@ -27,7 +27,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
 
 1. **Create a New Notebook**
 
-### 2. Load Data into Synapse (Same as HW 4)
+### 2. Load Data into Synapse 
 
 1. **Set up Access to Azure Data Lake Storage**
     - In your Synapse notebook, configure access to your ADLS account using the storage account name and key.
