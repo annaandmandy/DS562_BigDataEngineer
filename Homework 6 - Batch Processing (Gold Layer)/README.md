@@ -182,7 +182,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
         df = df.withColumn("so2_24hr", calculate_rolling_average(df, "so2", 24))
         df = df.withColumn("no2_1hr", df["no2"])
     
-        **calculate_aqi_udf** = F.udf(lambda row: calculate_aqi_row(row), IntegerType())
+        calculate_aqi_udf = F.udf(lambda row: calculate_aqi_row(row), IntegerType())
         
         df = df.withColumn("us_aqi", calculate_aqi_udf(F.struct(
             col("o3_8hr"),
