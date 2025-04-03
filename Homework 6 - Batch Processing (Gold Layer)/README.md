@@ -40,18 +40,6 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     **`{container}`**: This placeholder will be replaced by the name of the blob **container** you want to access. A container in Azure Blob Storage is similar to a directory where blobs (files) are stored.
     
     ```python
-    # Read data directly from ADLS Gen2
-    container_name = ""
-    air_pollution_folder_path = ""  # Folder, not a single file
-    historical_weather_folder_path = ""
-
-    # Read all JSON files in the folder
-    air_pollution_df = spark.read.json(f"abfss://{container_name}@{storage_account_name}.dfs.core.windows.net/{air_pollution_folder_path}")
-    historical_weather_df = spark.read.json(f"abfss://{container_name}@{storage_account_name}.dfs.core.windows.net/{historical_weather_folder_path}")
-    # Show the DataFrame
-    ```
-    
-    ```python
     # Set up the configuration for accessing the storage account
     storage_account_name = "your_storage_account_name"
     storage_account_key = "your_storage_account_key"
