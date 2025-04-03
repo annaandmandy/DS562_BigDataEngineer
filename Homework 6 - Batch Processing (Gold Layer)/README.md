@@ -83,8 +83,6 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     from pyspark.sql.window import Window
     from pyspark.sql.types import IntegerType
     ```
-    
-    <aside>
     💡
     
     `pyspark.sql.functions` contains a wide variety of functions for data manipulation, including aggregation, string operations, mathematical functions, and more. 
