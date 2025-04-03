@@ -370,23 +370,23 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
 
 ### 5. **Save Data to the Gold Layer**
 
-1. Save Processed and Aggregated Data to the Gold Layer
+1. Save Processed and Aggregated Data to the Gold Layer (YOU HAVE TO SPECIFY WHERE YOUR GOLD IS)
     
     ```python
     # Save aggregated data as single files
     # can modify this to go directly to your directories
-    weather_agg_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/agg_weather")
-    weather_condition_counts_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/agg_weather_conditions")
-    temp_extremes_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/agg_temp_extremes")
-    aqi_agg_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/agg_aqi")
-    pollutant_agg_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/agg_pollutants")
-    high_pollution_events_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/agg_high_pollution_events")
+    weather_agg_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_weather")
+    weather_condition_counts_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_weather_conditions")
+    temp_extremes_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_temp_extremes")
+    aqi_agg_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_aqi")
+    pollutant_agg_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_pollutants")
+    high_pollution_events_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_high_pollution_events")
     
     # Save processed weather data
-    weather_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/processed_weather")
+    weather_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../processed_weather")
     
     # Save processed air pollution data
-    air_pollution_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/processed_air_pollution")
+    air_pollution_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../processed_air_pollution")
     
     ```
     
