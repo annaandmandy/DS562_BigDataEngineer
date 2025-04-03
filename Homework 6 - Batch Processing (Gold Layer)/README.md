@@ -49,14 +49,14 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     spark.conf.set(
         f"fs.azure.account.key.{storage_account_name}.dfs.core.windows.net",
         storage_account_key
-    )
+     )
     
     # Define ABFSS path
-    abfss_path = f"abfss://{container}@{storage_account_name}.dfs.core.windows.net/"
+    # abfss_path = f"abfss://{container}@{storage_account_name}.dfs.core.windows.net/"
     
     # Example: reading a Parquet file from ADLS Gen2
-    df = spark.read.parquet(f"{abfss_path}path/to/your/file.parquet")
-    df.show()
+    # df = spark.read.parquet(f"{abfss_path}path/to/your/file.parquet")
+    # df.show()
     
     ```
     
@@ -116,8 +116,7 @@ The **Gold Layer** represents the highest quality of data in the architecture, e
     
         return None  # If the concentration is out of the given ranges
     ```
-    
-    <aside>
+   
     💡
     
     **`calculate_aqi`** takes a pollutant type and concentration and maps it to an AQI value based on predefined breakpoints.
