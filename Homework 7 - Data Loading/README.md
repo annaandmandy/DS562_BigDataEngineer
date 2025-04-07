@@ -1,437 +1,751 @@
-**Objective**: Perform batch processing on the preprocessed data to handle large-scale data transformations and aggregations using Azure Synapse with PySpark. The processed data will be stored in the Gold layer of Azure Data Lake Storage.
+# HW8: Data Loading
 
-**Tools**: Azure Synapse, PySpark, Azure Data Lake Storage
+**Objective:** Move the processed data from the Gold layer in Azure Data Lake Storage (ADLS) to the data warehouse using Azure Synapse Analytics. Specifically, we are ingesting data from our storage account first into *external tables*, then branching off those external tables to create internal synapse dimension, fact, and aggregated tables.
 
 
-💡 ***What is Apache Spark?*
-[Apache Spark](https://learn.microsoft.com/en-us/azure/databricks/spark/)** is an open-source, distributed processing system designed for big data workloads. It provides *in-memory computing*, which speeds up data processing tasks, etc. It is the underlying distributed data processing engine used by Synapse, which is a cloud-based platform that provides a collaborative environment for data engineering, data science, and machine learning. When you deploy a compute cluster or SQL warehouse on Azure Synapse, Apache Spark is configured and deployed to virtual machines. You don’t need to configure or initialize a [Spark context or Spark session](https://www.notion.so/HW7-Batch-Processing-c41cbdf25444472aa84f9680514868df?pvs=21), as these are managed for you by Azure. It uses lazy evaluation to process transformations and actions defined with DataFrames.
+>💡 ***What is Azure Synapse Analytics?*
+[Azure Synapse Analytics](https://azure.microsoft.com/en-us/products/synapse-analytics#:~:text=Azure%20Synapse%20Analytics%20is%20an,log%20and%20time%20series%20analytics)**: query data using either serverless or provisioned resources, providing a unified experience to ingest, prepare, manage, and serve data for immediate business intelligence and machine learning needs. Synapse enables efficient data processing across various data types, including structured, unstructured, and streaming data, making it ideal for complex analytical workloads.
 
-- **DataFrames** are the primary objects in Apache Spark. A DataFrame is a dataset organized into named columns. You can think of a DataFrame like a spreadsheet or a SQL table, a two-dimensional labeled data structure of a series of records and columns of different types. They also provide a rich set of functions that allow you to perform common data manipulation and analysis tasks efficiently.
-- Transformations: In Spark you express processing logic as transformations, which are instructions for loading and manipulating data using DataFrames. Common transformations include reading data, joins, aggregations, and type casting.
-- **Lazy Evaluation**: Spark optimizes data processing by identifying the most efficient physical plan to evaluate logic specified by transformations. However, Spark does not act on transformations until actions are called. Rather than evaluating each transformation in the exact order specified, Spark *waits until an action triggers computation on all transformations*. Spark handles their execution in a deferred manner, rather than immediately executing them when they are defined.
 
->
-💡 ***What is PySpark?*   [PySpark](https://learn.microsoft.com/en-us/azure/databricks/pyspark/)** is the Python API for Apache Spark, an open-source distributed computing system that enables large-scale data processing. PySpark allows you to use Python to interact with Spark’s capabilities, such as in-memory data processing, distributed machine learning, and graph processing. It's commonly used for big data analytics, enabling you to process large datasets efficiently across a cluster of machines. PySpark integrates seamlessly with other big data tools, including Hadoop, and is widely used in data engineering, data science, and machine learning projects
 
-</aside>
+<details> <summary><strong>External Vs Internal Tables in Synapse (toggle the dropdown)</strong></summary> <br>
+    In Azure Synapse Analytics, external and internal tables serve different purposes and are designed for different use cases. Here’s a detailed comparison of the two:
+    ---
 
-<aside>
-💡 ***What is the Gold Layer?***
-The **Gold Layer** represents the highest quality of data in the architecture, enabling decision-makers and analysts to derive insights and make informed decisions based on reliable and well-structured data.
+### 🗂️ Internal Tables
 
-</aside>
+**Definition:**  
+Internal tables (also known as user tables) are tables that reside within the Synapse SQL pool. Data is stored and managed directly within the Synapse service.
+
+**Characteristics:**
+
+1. **Storage Location:**  
+   - Stored within the **Synapse SQL** pool’s distributed storage.
+
+2. **Data Management:**  
+   - Managed by Synapse, including distribution, replication, and backup.  
+   - Supports indexes, constraints, transactions.
+
+3. **Performance:**  
+   - Optimized for high-performance querying.  
+   - Ideal for fast, interactive queries on large datasets.
+
+4. **Security:**  
+   - Protected by Synapse security model (encryption, access control).
+
+5. **Usage:**  
+   - Best for data warehousing, ETL, and reporting where data is internal to Synapse.
+
+**Examples of Internal Table Types:**
+
+- Heap Tables  
+- Clustered Index Tables  
+- Clustered Columnstore Tables  
+
+---
+### 🌐 External Tables
+
+**Definition:**  
+External tables query data stored outside Synapse (e.g., in Azure Data Lake or Blob Storage), using [PolyBase](https://learn.microsoft.com/en-us/sql/relational-databases/polybase/polybase-guide?view=sql-server-ver16).
+
+**Characteristics:**
+
+1. **Storage Location:**  
+   - Data stays in **ADLS**, Blob Storage, etc.
+
+2. **Data Management:**  
+   - Managed externally (Synapse doesn't control lifecycle).  
+   - Supports unstructured/semi-structured data.
+
+3. **Performance:**  
+   - Dependent on external system performance and network latency.  
+   - Can use `PolyBase` or `OPENROWSET`.
+
+4. **Security:**  
+   - Controlled by both Synapse and external storage access policies.
+
+5. **Usage:**  
+   - Best for big data, raw file access, and lakehouse scenarios.
+
+**Examples of External Sources:**
+
+- Azure Data Lake Storage (ADLS)  
+- Azure Blob Storage  
+- Other cloud data sources  
+
+---
+### 🔑 Key Differences
+
+| Feature                | Internal Tables                          | External Tables                          |
+|------------------------|------------------------------------------|------------------------------------------|
+| **Storage**            | In Synapse SQL pool                      | In external storage (e.g., ADLS)         |
+| **Managed By**         | Synapse                                  | External system                          |
+| **Performance**        | High performance inside Synapse          | Depends on storage + network             |
+| **Use Cases**          | Data warehousing, ETL, reporting         | Big data, lake analytics, virtual access |
+
+---
+
+</details>
+
+>💡**Dedicated Vs. Serverless SQL Pools in Synapse**
+We will be using the **Serverless SQL pool** in Synapse for the duration of this homework. Here are some primary differences:
+        - **Resource Management:** Dedicated pools require manual scaling and management, while Serverless pools handle scaling automatically.
+        - **Billing:** Dedicated pools incur costs based on provisioned resources, whereas Serverless pools charge based on the volume of data processed by each query.
+        - **Data Storage:** Dedicated pools store data within the pool itself, whereas Serverless pools query data directly from external storage like Azure Data Lake.
+Dedicated SQL pools also use **Hadoop External Tables** as opposed to **Native External Tables.** 
+https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/develop-tables-external-tables?tabs=hadoop
+![alt text](images/image.png)
 
 ### Steps:
+>⚠️ [We are providing you with this guidance to prevent any unnecessary costs!](https://learn.microsoft.com/en-us/answers/questions/992615/cost-comparison-serverless-vs-dedicated-sql-pool)
+## 1. Set Up Azure Synapse Analytics
+1. **Create a Synapse Workspace**:
+    - https://learn.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-workspace
+2. **Create a Serverless SQL Pool**:
+    - In your Synapse workspace, go to “SQL pools” under the “Analytics pools” section.
+    - Click on “New” to create a new SQL pool.
+    - **Choose the cheapest tier (DW100c) for cost efficiency.**
+    - Configure the SQL pool settings (name, performance level, etc.) and create the pool.
+    - Note: To manage costs, make sure to pause the SQL pool when not in use.
 
-### 1. Create a New Notebook in Synapse
+>⚠️ ****EXTREMELY IMPORTANT NOTE!!!**** **SQL POOLS ARE COSTLY! PLEASE ENSURE ITS SHUT DOWN IF NOT BEING USED!!!
 
-1. **Create a New Notebook**
+## 2. Load Data from ADLS to Data Warehouse
+1. **Create External Tables**:
 
-### 2. Load Data into Synapse 
+    >💡**External tables** in Azure Synapse Analytics are used to access and manage data stored outside the serverless SQL pool. Here are some key uses:
+        - Querying external data using Transact-SQL statements
+        - Import data from external storage into serverless SQL pool
+            - different tools for quick ad-hoc analytics on data without needing to load it into the SQL pool 
+    For the task below, we are first creating the external tables to load data initially without needing to store it in the SQL pool.
+    
+    >💡 An **external file format** in Azure Synapse Analytics defines the structure and format of data stored in external sources, such as Azure Blob Storage or Azure Data Lake Storage. This format is crucial for interpreting the data correctly when creating and querying external tables. 
+    
+    https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/create-use-external-tables
+    - In Synapse Studio, open a new SQL script
+    - Connect to your Serverless SQL Pool (e.g. “ds598sqlpool”)
+    - Use your created database (e.g. “ds598sqlpool”)
+    - Create **external tables** to read data from the gold layer in ADLS.
 
-1. **Set up Access to Azure Data Lake Storage**
-    - In your Synapse notebook, configure access to your ADLS account using the storage account name and key.
-    
-    >
-    💡
-    
-    **`wasbs://`**: This is the protocol used to access Azure Blob Storage. "wasbs" stands for "Windows Azure Storage Blob Secure," indicating that the connection is secure.
-    
-    **`{container}`**: This placeholder will be replaced by the name of the blob **container** you want to access. A container in Azure Blob Storage is similar to a directory where blobs (files) are stored.
-    
-    ```python
-    # Set up the configuration for accessing the storage account
-    storage_account_name = "your_storage_account_name"
-    storage_account_key = "your_storage_account_key"
-    container = "your_container_name"
-    
-    # Set Spark config to access the storage account
-    spark.conf.set(
-        f"fs.azure.account.key.{storage_account_name}.dfs.core.windows.net",
-        storage_account_key
-     )
-    
-    # Define ABFSS path
-    # abfss_path = f"abfss://{container}@{storage_account_name}.dfs.core.windows.net/"
-    
-    # Example: reading a Parquet file from ADLS Gen2
-    # df = spark.read.parquet(f"{abfss_path}path/to/your/file.parquet")
-    # df.show()
-    
-    ```
-    
-2. **Load Data into DataFrame**:
-    - Load the data from the ADLS container into a DataFrame for analysis.
-    
-    ```python
-    # Load the weather data from the silver layer
-    weather_df = spark.read.parquet(f"abfss://<container-name>@<storage-account-name>.dfs.core.windows.net/<path-to-file>")
-    
-    # Load the air pollution data
-    air_pollution_df =  spark.read.parquet(f"abfss://<container-name>@<storage-account-name>.dfs.core.windows.net/<path-to-file>")
-    
-    ```
-    
-
-### 3. Data Processing
-
-1. **Recalculate AQI for Air Pollution Data**
-    
-    ```python
-    from pyspark.sql.functions import col
-    import pyspark.sql.functions as F
-    from pyspark.sql.window import Window
-    from pyspark.sql.types import IntegerType
-    ```
-    💡
-    
-    `pyspark.sql.functions` contains a wide variety of functions for data manipulation, including aggregation, string operations, mathematical functions, and more. 
-    
-    The `Window` class is used to define window specifications for performing window functions, such as ranking, cumulative sums, and moving averages, over specific partitions of data.
-    
-    - **Example**: `Window.partitionBy("category").orderBy("date")` creates a window specification to apply functions within each `category` partition ordered by `date`.
-    </aside>
-    
-    ```python
-    def calculate_aqi(pollutant, concentration):
-        breakpoints = {
-            'O3_8hr': [(0, 54, 0, 50), (55, 70, 51, 100), (71, 85, 101, 150), (86, 105, 151, 200), (106, 200, 201, 300)],
-            'O3_1hr': [(125, 164, 101, 150), (165, 204, 151, 200), (205, 404, 201, 300), (405, 504, 301, 400), (505, 604, 401, 500)],
-            'PM2.5_24hr': [(0, 12, 0, 50), (12.1, 35.4, 51, 100), (35.5, 55.4, 101, 150), (55.5, 150.4, 151, 200), (150.5, 250.4, 201, 300), (250.5, 350.4, 301, 400), (350.5, 500.4, 401, 500)],
-            'PM10_24hr': [(0, 54, 0, 50), (55, 154, 51, 100), (155, 254, 101, 150), (255, 354, 151, 200), (355, 424, 201, 300), (425, 504, 301, 400), (505, 604, 401, 500)],
-            'CO_8hr': [(0, 4.4, 0, 50), (4.5, 9.4, 51, 100), (9.5, 12.4, 101, 150), (12.5, 15.4, 151, 200), (15.5, 30.4, 201, 300), (30.5, 40.4, 301, 400), (40.5, 50.4, 401, 500)],
-            'SO2_1hr': [(0, 35, 0, 50), (36, 75, 51, 100), (76, 185, 101, 150), (186, 304, 151, 200)],
-            'SO2_24hr': [(305, 604, 201, 300), (605, 804, 301, 400), (805, 1004, 401, 500)],
-            'NO2_1hr': [(0, 53, 0, 50), (54, 100, 51, 100), (101, 360, 101, 150), (361, 649, 151, 200), (650, 1249, 201, 300), (1250, 2049, 301, 400), (2050, 3049, 401, 500)],
-        }
-    
-        if pollutant not in breakpoints:
-            raise ValueError(f"Unsupported pollutant: {pollutant}")
-    
-        for (Clow, Chigh, Ilow, Ihigh) in breakpoints[pollutant]:
-            if Clow <= concentration <= Chigh:
-                return round(((Ihigh - Ilow) / (Chigh - Clow)) * (concentration - Clow) + Ilow)
-    
-        return None  # If the concentration is out of the given ranges
-    ```
-   
-    💡
-    
-    **`calculate_aqi`** takes a pollutant type and concentration and maps it to an AQI value based on predefined breakpoints.
-    
-    **`Breakpoints`** dictionary in your **`calculate_aqi`** function defines the Air Quality Index (AQI) **breakpoints** for various pollutants. Each pollutant has its own set of **breakpoints**, which indicate the concentration levels at which the air quality transitions from one category to another (e.g., from Good to Moderate, Moderate to Unhealthy, etc.).
-    
-    - **`Clow`**: The lower bound of the concentration range.
-    - **`Chigh`**: The upper bound of the concentration range.
-    - **`Ilow`**: The lower bound of the AQI for this concentration range.
-    - **`Ihigh`**: The upper bound of the AQI for this concentration range.
-    
-    Each key in the dictionary corresponds to a specific pollutant and its measurement duration (e.g., Ozone over 8 hours, PM2.5 over 24 hours, etc.).
-    
-    The formula ***((Ihigh - Ilow) / (Chigh - Clow)) * (concentration - Clow) + Ilow*** is used to map a pollutant's measured concentration to an AQI value that represents the potential health risk to the public. This allows for a continuous scale where *pollutant levels can be accurately associated with an AQI that fits within predefined health categories*. Here's a breakdown of the formula:
-
-    ![alt text](images/aqi2.png)
-    
-    - **`(Ihigh - Ilow) / (Chigh - Clow)`**: This calculates the slope of the AQI scale over the concentration range.
-    - **`(concentration - Clow)`**: This represents how far the given concentration is from the lower bound of the concentration range.
-    - **`(concentration - Clow)`**: This scales the AQI increment based on the distance from **`Clow`** to the actual **`concentration`**.
-    - **`+ Ilow`**: This shifts the calculated AQI value to start from the lower bound **`Ilow`** of the AQI range.
-    
-    *Breakpoints visualized:*
-    
-    ![alt text](images/breakpoints.png)
+    >💡**About NVARCHAR…**
+    As you can see below, some of the column datatypes are casted to NVARCHAR(100). What this does is provide an all-encompassing datatype that acts similarly to the Python String datatype, where you can input numbers, strings, characters. etc.
+    The downsides of using nvarchar are as follows:
+            - **the increased query times**: nvarchar has significantly more overhead compared to int or float
+            - **increased downstream workload:** if we cast all our datatypes to nvarchar, now our analysts querying this data have to manually cast each datatype within their **PowerBI** environment. PowerBI does provide robust autocasting features, this step should be generally avoided by casting the correct datatype within the external tables to begin with.
+        While it is bad practice, NVARCHAR does allow us the flexibility to ingest different data formats within our synapse table. Generally, you should use the actual datatypes in the external and created tables and save yourself from datatyping issues within powerBI and AzureML. However, it is a decent troubleshooting method you can apply.
     
     </aside>
     
-    ```python
-    def calculate_rolling_average(df, column, window):
-        windowSpec = Window.partitionBy("location").orderBy("date_time").rowsBetween(-window+1, 0)
-        return F.avg(column).over(windowSpec)
+    **Overview of External Tables**
     
-    def calculate_aqi_row(row):
-        pollutant_map = {
-            'o3_8hr': 'O3_8hr',
-            'o3_1hr': 'O3_1hr',
-            'pm2_5_24hr': 'PM2.5_24hr',
-            'pm10_24hr': 'PM10_24hr',
-            'co_8hr': 'CO_8hr',
-            'so2_1hr': 'SO2_1hr',
-            'so2_24hr': 'SO2_24hr',
-            'no2_1hr': 'NO2_1hr'
-        }
-        aqi_values = []
+    - **ExternalAirPollution**:
+        - Stores air pollution data, including pollutants like CO, NO, NO2, etc.
+    - **ExternalWeather**:
+        - Contains weather data, such as temperature, humidity, and wind speed.
+    - **ExternalAggWeather**:
+        - Provides aggregated weather statistics, such as average temperature and humidity.
+    - **ExternalAggWeatherConditions**:
+        - Stores counts of different weather conditions by date.
+    - **ExternalAggTempExtremes**:
+        - Records the maximum and minimum temperatures by date.
+    - **ExternalAggAQI**:
+        - Contains average Air Quality Index (AQI) values by date.
+    - **ExternalAggPollutants**:
+        - Stores average concentrations of various pollutants.
+    - **ExternalHighPollutionEvents**:
+        - Tracks the number of high pollution events by date.
     
-        for col_name, pollutant in pollutant_map.items():
-            concentration = row[col_name]
-            if concentration is not None:
-                aqi = calculate_aqi(pollutant, concentration)
-                if aqi is not None:
-                    aqi_values.append(aqi)
+    #### **Connect to External Data Source and Parquet File Format**
     
-        if aqi_values:
-            return max(aqi_values)
-        return None
+    ```sql
+    -- Create external data source
+    CREATE EXTERNAL DATA SOURCE MyDataSource
+    WITH (
+        LOCATION = 'https://your_storage_account_name.dfs.core.windows.net/your_container'
+    );
+    GO
     
-    def calculate_us_aqi(df):
-        df = df.withColumn("o3_8hr", calculate_rolling_average(df, "o3", 8))
-        df = df.withColumn("o3_1hr", df["o3"])
-        df = df.withColumn("pm2_5_24hr", calculate_rolling_average(df, "pm2_5", 24))
-        df = df.withColumn("pm10_24hr", calculate_rolling_average(df, "pm10", 24))
-        df = df.withColumn("co_8hr", calculate_rolling_average(df, "co", 8))
-        df = df.withColumn("so2_1hr", df["so2"])
-        df = df.withColumn("so2_24hr", calculate_rolling_average(df, "so2", 24))
-        df = df.withColumn("no2_1hr", df["no2"])
+    -- Create external file format
+    CREATE EXTERNAL FILE FORMAT ParquetFileFormat
+    WITH (
+        FORMAT_TYPE = PARQUET
+    );
+    GO
+    ```
     
-        calculate_aqi_udf = F.udf(lambda row: calculate_aqi_row(row), IntegerType())
+    ####**External Weather Table —> FactWeather Table**
+    
+    >💡
+    ![alt text](images/image-1.png)
+    ```sql
+    CREATE EXTERNAL TABLE ExternalWeather ( --positionality only matters for dedicated, can put in any sort of order here
+        calctime FLOAT,
+        city_id BIT,
+        cnt SMALLINT,
+        cod SMALLINT,
+        message NVARCHAR(100),
+        clouds_all SMALLINT,
+        timestamp INT,
+        feels_like_K FLOAT,
+        humidity SMALLINT,
+        pressure SMALLINT,
+        temp_K FLOAT,
+        temp_max_K FLOAT,
+        temp_min_K FLOAT,
+        weather_description NVARCHAR(100),  -- Assuming NVARCHAR for array type if data is stored as strings
+        icon NVARCHAR(100),                 -- Assuming NVARCHAR for array type if data is stored as strings
+        id NVARCHAR(100),
+        main NVARCHAR(100),                 -- Assuming NVARCHAR for array type if data is stored as strings
+        deg SMALLINT,
+        gust FLOAT,
+        speed FLOAT,
+        rain_1h REAL,
+        corrected_timestamp INT,
+        location NVARCHAR(100),
+        date_time DATETIME,
+        temp_C FLOAT,
+        feels_like_C FLOAT,
+        temp_min_C FLOAT,
+        temp_max_C FLOAT,
+        temp_F FLOAT,
+        feels_like_F FLOAT,
+        temp_min_F FLOAT,
+        temp_max_F FLOAT,
+        lon FLOAT,
+        lat FLOAT,
+        weather_id_value INT,
+        weather_main_value NVARCHAR(100),
+        weather_description_value NVARCHAR(100),
+        weather_icon_value NVARCHAR(100)
+    )
+    WITH (
+        LOCATION = '...processed_weather.parquet', --may be different based on your storage location
+        DATA_SOURCE = MyDataSource,
+        FILE_FORMAT = ParquetFileFormat
+    );
+    GO
+    ```
+    
+
+    >💡Now we are going to use SQL scripts to actually load the data into our external tables within our SQL pool! 
+    We first create the table within our SQL pool corresponding to each external table, then load the data from external → internal table.
+    https://learn.microsoft.com/en-us/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-develop-ctas
+    
+    </aside>
+    
+    ```sql
+    -- Create FactWeather table with matching data types (internal sql table)
+    CREATE TABLE FactWeather (
+        id NVARCHAR(100),                             -- String identifier to match ExternalWeather's NVARCHAR(100)
+        date_time DATETIME2,                          -- Higher precision datetime to match ExternalWeather's DATETIME2 usage
+        date DATE,        
+        location NVARCHAR(100),                       -- Shorter NVARCHAR(100) to match ExternalWeather's location column
+        humidity SMALLINT,                            -- Small integer to match ExternalWeather's SMALLINT for humidity
+        pressure SMALLINT,                            -- Small integer to match ExternalWeather's SMALLINT for pressure
+        clouds_all SMALLINT,                          -- Small integer to match ExternalWeather's SMALLINT for clouds_all
+        wind_deg SMALLINT,                            -- Small integer to match ExternalWeather's SMALLINT for wind_deg
+        wind_gust FLOAT,                              -- Float for wind gust data, matching ExternalWeather's FLOAT
+        wind_speed FLOAT,                             -- Float for wind speed, matching ExternalWeather's FLOAT
+        temp_K FLOAT,                                 -- Float to match ExternalWeather's temp_K
+        feels_like_K FLOAT,                           -- Float to match ExternalWeather's feels_like_K
+        temp_max_K FLOAT,                             -- Float to match ExternalWeather's temp_max_K
+        temp_min_K FLOAT,                             -- Float to match ExternalWeather's temp_min_K
+        temp_C FLOAT,                                 -- Float to match ExternalWeather's temp_C
+        feels_like_C FLOAT,                           -- Float to match ExternalWeather's feels_like_C
+        temp_max_C FLOAT,                             -- Float to match ExternalWeather's temp_max_C
+        temp_min_C FLOAT,                             -- Float to match ExternalWeather's temp_min_C
+        temp_F FLOAT,                                 -- Float to match ExternalWeather's temp_F
+        feels_like_F FLOAT,                           -- Float to match ExternalWeather's feels_like_F
+        temp_max_F FLOAT,                             -- Float to match ExternalWeather's temp_max_F
+        temp_min_F FLOAT,                             -- Float to match ExternalWeather's temp_min_F
+        weather_combined_value NVARCHAR(200)          -- NVARCHAR to match ExternalWeather, increased length for combined data
+    );
+    GO
+    ```
+    
+    ```sql
+    -- Insert data into FactWeather
+    --wind columns might be null if you didnt ingest them, so remove them from the insert
+    INSERT INTO FactWeather (id, date_time, date, location, humidity, pressure, clouds_all, temp_K, feels_like_K, temp_max_K, temp_min_K, temp_C, feels_like_C, temp_max_C, temp_min_C, temp_F, feels_like_F, temp_max_F, temp_min_F, weather_combined_value)
+    SELECT 
+        id,
+        date_time, 
+        CAST(date_time AS DATE) AS date,
+        location,
+        humidity, 
+        pressure, 
+        clouds_all, 
+        temp_K, 
+        feels_like_K, 
+        temp_max_K, 
+        temp_min_K,
+        temp_C,
+        feels_like_C,
+        temp_max_C,
+        temp_min_C,
+        temp_F,
+        feels_like_F,
+        temp_max_F,
+        temp_min_F,
+        CONCAT(weather_id_value, '_', weather_icon_value) AS weather_combined_value
+    FROM 
+        ExternalWeather;
+    GO
+    ```
+    
+
+    >💡 **Key things** happening here:
+        - matching column names with the ones created from synapse
+        - casting column datatypes to NVARCHAR(100) if originally string
+        - bringing data from external → internal table for later downstream usage
+        - debug with:
+            ```sql
+            SELECT *
+            FROM [dbo].[FactWeather]
+            ```
+    ![alt text](images/image-2.png)
+            
+    ```sql
+    --in case you mess up and need to restart...run this code (can't revise tables after creation, easier to just drop it and remake):
+    DROP EXTERNAL TABLE EXTERNALWEATHER
+    GO
+    
+    DROP  TABLE FactWeather
+    GO
+    ```
+
+    
+    **External AirPollution Table —> DimAirPollution Table**
+    ![alt text](images/image-3.png)
+    ```sql
+    CREATE EXTERNAL TABLE ExternalAirPollution (
+        lon FLOAT,                          -- Longitude
+        lat FLOAT,                          -- Latitude
+        aqi INT,                            -- Air Quality Index (integer)
+        co FLOAT,                           -- Carbon monoxide level
+        no FLOAT,                           -- Nitric oxide level
+        no2 FLOAT,                          -- Nitrogen dioxide level
+        o3 FLOAT,                           -- Ozone level
+        so2 FLOAT,                          -- Sulfur dioxide level
+        pm2_5 FLOAT,                        -- Particulate matter 2.5 level
+        pm10 FLOAT,                         -- Particulate matter 10 level
+        nh3 FLOAT,                          -- Ammonia level
+        timestamp INT,                      -- Original timestamp (integer)
+        corrected_timestamp INT,            -- Corrected timestamp (integer)
+        location NVARCHAR(100),             -- Location as a string
+        date_time DATETIME2,                -- Date and time with timestamp precision
+        id NVARCHAR(100),                   -- String identifier
+        o3_8hr FLOAT,                       -- Ozone level (8-hour average)
+        o3_1hr FLOAT,                       -- Ozone level (1-hour average)
+        pm2_5_24hr FLOAT,                   -- PM2.5 level (24-hour average)
+        co_8hr FLOAT,                       -- CO level (8-hour average)
+        pm10_24hr FLOAT,                    -- PM10 level (24-hour average)
+        so2_1hr FLOAT,                      -- SO2 level (1-hour average)
+        so2_24hr FLOAT,                     -- SO2 level (24-hour average)
+        no2_1hr FLOAT,                      -- NO2 level (1-hour average)
+        us_aqi INT                          -- U.S. Air Quality Index (integer)
+    )
+    WITH (
+        LOCATION = 'gold/processed_air_pollution/processed_air_pollution.parquet',
+        DATA_SOURCE = MyDataSource,
+        FILE_FORMAT = ParquetFileFormat
+    );
+    GO
+    ```
+    
+    ```dart
+    -- Create and load DimAirPollution table
+    CREATE TABLE DimAirPollution (
+        id NVARCHAR(100),
+        aqi NVARCHAR(100),
+        co FLOAT,
+        no FLOAT,
+        no2 FLOAT,
+        o3 FLOAT,
+        so2 FLOAT,
+        pm2_5 FLOAT,
+        pm10 FLOAT,
+        nh3 FLOAT
+    );
+    GO
+    ```
+    
+    ```sql
+    INSERT INTO DimAirPollution (id, aqi, co, no, no2, o3, so2, pm2_5, pm10, nh3)
+    SELECT DISTINCT 
+        id, 
+        aqi, 
+        co, 
+        no, 
+        no2, 
+        o3, 
+        so2, 
+        pm2_5, 
+        pm10, 
+        nh3
+    FROM 
+        ExternalAirPollution;
+    ```
+    
+    ```sql
+    --in case yo screw up and need to restart...
+    DROP EXTERNAL TABLE ExternalAirPollution
+    GO
+    
+    DROP  TABLE DimAirPollution 
+    GO
+    ```
+    
+    **Other External Tables**
+    
+    Follow the same process - referring to the schema found in your synapse notebook output and translating that into external tables —> inserting into regular tables. 
+    
+    >💡**Datatyping General Rule of Thumb:** here are some datatype conversions you can consider doing when going from  synapse schemas → external tables
+        - string → nvarchar(100)
+        - double → float
+        - timestamp → datetime2
+    
+    ```sql
+    CREATE EXTERNAL TABLE ExternalAggWeatherConditions (
+    		date DATE,
+        weather_main_value VARCHAR(100),
+        count INT)
+      WITH (
+    	  LOCATION = --location of your external agg weather conditions file,
+    	  DATA_SOURCE = ?,
+    	  FILE_FORMAT = ?
+    );
+    GO
+    ```
+    
+    ```sql
+    CREATE EXTERNAL TABLE ExternalAggTempExtremes (
+    	...
+    )
+    WITH (
+        LOCATION = --location of your external agg temp extremes file,
+        DATA_SOURCE = ?,
+        FILE_FORMAT = ?
+    );
+    GO
+    ```
+    
+    ```sql
+    CREATE EXTERNAL TABLE ExternalAggAQI (
+    		...
+    );
+    GO
+    ```
+    
+    ```sql
+    CREATE EXTERNAL TABLE ExternalHighPollutionEvents (
+      ...
+    );
+    GO
+    ```
+    
+<details>
+  <summary><strong>📊 Fact vs Dimension vs Aggregated Tables</strong></summary>
+
+<div markdown="1">
+
+### **Fact Tables**
+- **Purpose**: Fact tables store quantitative data, known as "measures" or "facts," related to business events or transactions. They capture the core transactional or event-driven data, such as sales amounts, quantities, temperatures, and air quality indices, often at a granular level.
+- **Characteristics**:
+  - Contain **numeric values**, which can be aggregated or summarized (e.g., **SUM**, **AVG**).
+  - Have **foreign keys** that reference dimension tables, linking each fact to descriptive context.
+  - Often have a **high number of rows** but fewer columns than dimension tables.
+
+---
+
+### **Dimension Tables**
+- **Purpose**: Dimension tables store descriptive attributes, or "dimensions," that provide context to the facts. They help categorize and provide details to make facts understandable, allowing users to filter, group, and organize fact data for analysis.
+- **Characteristics**:
+  - Contain **textual information** (e.g., city names, dates, product categories).
+  - Have a **primary key** that links to fact tables via foreign keys.
+  - Usually have a **lower number of rows** than fact tables but more descriptive columns.
+
+---
+
+### **Aggregated Tables**
+- **Purpose**: Aggregation tables are specialized fact tables that store **pre-computed, summarized data** to improve query performance.
+- **Characteristics**:
+  - Contain **summarized data**, like daily, monthly, or yearly totals or averages.
+  - Help reduce computational load and improve query response time.
+  - May include aggregations at different levels (e.g., **daily**, **monthly**, **by location**).
+
+</div>
+</details>
+
         
-        df = df.withColumn("us_aqi", calculate_aqi_udf(F.struct(
-            col("o3_8hr"),
-            col("o3_1hr"),
-            col("pm2_5_24hr"),
-            col("pm10_24hr"),
-            col("co_8hr"),
-            col("so2_1hr"),
-            col("so2_24hr"),
-            col("no2_1hr")
-        )))
+*All the below tables are derived from our created internal tables **ExternalWeather** and **ExternalAirPollution**.*
     
-        return df
-    
-    air_pollution_df = calculate_us_aqi(air_pollution_df)
-    ```
-    
-    <aside>
-    💡
-    
-    **`calculate_rolling_average(df, column, window)`**computes the rolling average of a specified column over a given window of time.
-    
-    - `df`: The input DataFrame.
-    - `column`: The column name for which the rolling average needs to be calculated.
-    - `window`: The size of the rolling window (e.g., 8 hours, 24 hours).
-    - A `WindowSpec` is created that partitions the data by `location` and orders it by `date_time`. The window spans from `window+1` to `0`, which includes the current row and the previous `window-1` rows.
-    - returns the rolling average for the specified column using `F.avg(column).over(windowSpec)`.
-    
-    **`calculate_aqi_row(row)`**calculates the AQI for each row by considering all relevant pollutants and selecting the highest AQI value.**Implementation**
-    
-    - A dictionary `pollutant_map` is created to map column names in the DataFrame to pollutant categories recognized by the `calculate_aqi` function.
-    - The function iterates over each pollutant, retrieves the concentration value from the row, and calculates the AQI using `calculate_aqi`.
-    - The AQI values are stored in a list, and the highest AQI value is returned using `max(aqi_values)`. If no AQI is calculated, `None` is returned.
-    
-    **`calculate_us_aqi(df)`**calculates the AQI for each row in the DataFrame and adds it as a new column `us_aqi`.
-    
-    - Adds columns to the DataFrame with calculated rolling averages or direct values for different pollutants:
-        - `o3_8hr`: 8-hour rolling average of `o3`.
-        - `o3_1hr`: Direct value from `o3`.
-        - `pm2_5_24hr`: 24-hour rolling average of `pm2_5`.
-        - `pm10_24hr`: 24-hour rolling average of `pm10`.
-        - `co_8hr`: 8-hour rolling average of `co`.
-        - `so2_1hr`: Direct value from `so2`.
-        - `so2_24hr`: 24-hour rolling average of `so2`.
-        - `no2_1hr`: Direct value from `no2`.
-    - A UDF (`calculate_aqi_udf`) is created from `calculate_aqi_row`, which takes a structured input and calculates the AQI.
-        - UDF (User Defined Function) is a custom function that you create to extend the functionality of built-in operations within a framework or programming environment.
-    - The new column `us_aqi` is added to the DataFrame by applying the UDF on a struct that includes all relevant pollutant columns.
-    </aside>
-    
+If any of the column names **DO NOT WORK**, refer back to your original synapse schemas **OR** refer back to the structure of the externalweather and externalairpollution tables.
 
-**Reference**: [OpenWeatherMap AQI Levels](https://openweathermap.org/air-pollution-index-levels)
+```sql
+-- Create and load DimDateTime table
+CREATE TABLE DimDateTime (
+-- A dimension table that breaks down date and time components.
+-- Contains detailed temporal information such as year, month, day, hour, minute, and whether the date is a weekend.
+    date_time DATETIME,
+    date DATE,
+    year INT,
+    month INT,
+    day INT,
+    hour INT,
+    minute INT,
+    second INT,
+    quarter INT,
+    week INT,
+    day_of_week INT,
+    day_name VARCHAR(10),
+    month_name VARCHAR(10),
+    is_weekend BIT
+);
+GO
 
-- **Recalculation Explained**
-    
-    ![alt text](images/api.png)
-    
-    ### Air Quality Index (AQI) Recalculation
-    
-    ### Step-by-Step Explanation:
-    
-    1. **Breakpoints Definition**:
-        - The breakpoints for each pollutant are defined based on their concentrations and the corresponding AQI values. These breakpoints are specific to the pollutant and are defined for different time intervals (e.g., 8-hour for O₃, 24-hour for PM2.5, etc.).
-    2. **Piecewise Linear Function**:
-        - The AQI is calculated using a piecewise linear function:
-            
-            ![alt text](images/aqi.png)
-            
-        - Where:
-            - \( I \) is the AQI,
-            - \( C \) is the pollutant concentration,
-            - \( C_{low} \) and \( C_{high} \) are the concentration breakpoints,
-            - \( I_{low} \) and \( I_{high} \) are the AQI breakpoints.
-    3. **Handling Multiple Pollutants**:
-        - The AQI is calculated for each pollutant individually, and the highest AQI value among all pollutants is used as the final AQI.
-    4. **Rolling Averages**:
-        - For pollutants that require an averaging period (e.g., 8-hour O₃, 24-hour PM2.5), rolling averages are calculated to ensure the correct time-based aggregation.
-    5. **Integration with PySpark**:
-        - The process is implemented using PySpark to handle large-scale data efficiently. Custom user-defined functions (UDFs) are used to apply the AQI calculation logic to each row in the DataFrame.
-1.  **Verify Recalculation**: show the DataFrame to verify the recalculation of AQI.
-    
-    ```python
-    # Display selected columns to verify recalculations
-    air_pollution_df.select(
-        "date_time", 
-        "o3_8hr", 
-        "o3_1hr", 
-        "pm2_5_24hr", 
-        "pm10_24hr", 
-        "co_8hr", 
-        "so2_1hr", 
-        "so2_24hr", 
-        "no2_1hr", 
-        "us_aqi",
-        "aqi"
-    ).show(10)
-    ```
-    
+INSERT INTO DimDateTime (date_time, date, year, month, day, hour, minute, second, quarter, week, day_of_week, day_name, month_name, is_weekend)
+SELECT DISTINCT 
+    date_time,
+    CAST(date_time AS DATE) AS date,
+    DATEPART(YEAR, date_time) AS year,
+    ... AS month,
+    ... AS day,
+    ... AS hour,
+    ... AS minute,
+        ... AS second,
+    ... AS quarter,
+    ... AS week,
+    ... AS day_of_week,
+    ... AS day_name,
+    ... AS month_name,
+    CASE WHEN DATEPART(WEEKDAY, date_time) IN (1, 7) THEN 1 ELSE 0 END AS is_weekend
+FROM 
+    ExternalWeather;
+GO
+```
 
-### 4. Data Aggregation
+```sql
+-- Create and load DimWeatherCondition table
+CREATE TABLE DimWeatherCondition (
+-- A dimension table for weather condition details.
+-- Stores information about different weather conditions, including main weather categories and descriptions, along with a combined weather condition value.
+    weather_id_value VARCHAR(100),
+    weather_icon_value VARCHAR(10),
+    weather_main_value VARCHAR(100),
+    weather_description_value VARCHAR(100),
+    weather_combined_value VARCHAR(110)
+);
+GO
 
-1. **Weather Data Aggregations**:
-    
-    ```python
-    # Aggregation by Date: Compute daily averages for temperature, humidity, wind speed, etc.
-    weather_agg_df = weather_df.groupBy(F.date_format(col("date_time"), "yyyy-MM-dd").alias("date")).agg(
-        F.round(F.avg("temp_F")).alias("avg_temp_F"),
-        F.round(F.avg("humidity"),2).alias("avg_humidity"),
-        F.round(F.avg("wind_speed"),2).alias("avg_wind_speed"),
-        F.round(F.max("temp_max_F")).alias("max_temp_F"),
-        F.round(F.min("temp_min_F")).alias("min_temp_F"),
-        F.count("id").alias("weather_records")
-    )
-    
-    # Weather Condition Counts: Count the occurrences of different weather conditions for each day
-    weather_condition_counts_df = weather_df.groupBy(F.date_format(col("date_time"), "yyyy-MM-dd").alias("date"), "weather_main_value").count()
-    
-    # Temperature Extremes: Identify the maximum and minimum temperatures for each day
-    temp_extremes_df = weather_df.groupBy(F.date_format(col("date_time"), "yyyy-MM-dd").alias("date")).agg(
-        F.max("temp_max_F").alias("max_temp_F"),
-        F.min("temp_min_F").alias("min_temp_F")
-    )
-    ```
-    
-    <aside>
-    💡
-    
-    **`weather_agg_df`**calculates daily averages for various weather parameters and assigns it within a dataframe.
-    
-    - **`groupBy`**: Groups the DataFrame by the formatted `date_time` column, extracting only the date part (`"yyyy-MM-dd"`) and aliasing it as `"date"`.
-    - **`.agg()` s**pecifies the aggregation functions for the grouped data:
-        - **`F.round(F.avg("temp_F")).alias("avg_temp_F")`**: Computes the average temperature in Fahrenheit, rounded to the nearest whole number, and aliases it as `avg_temp_F`.
-        - **`F.round(F.avg("humidity"), 2).alias("avg_humidity")`**: Computes the average humidity, rounded to 2 decimal places.
-        - **`F.round(F.avg("wind_speed"), 2).alias("avg_wind_speed")`**: Computes the average wind speed, rounded to 2 decimal places.
-        - **`F.round(F.max("temp_max_F")).alias("max_temp_F")`**: Finds the maximum temperature recorded on that day and rounds it.
-        - **`F.round(F.min("temp_min_F")).alias("min_temp_F")`**: Finds the minimum temperature recorded on that day and rounds it.
-        - **`F.count("id").alias("weather_records")`**: Counts the number of records for each day and aliases it as `weather_records`.
-    </aside>
-    
-    ```python
-    # Display the Aggregated Data (use the show functions)
-    
-    # (you have to write this code)
-    ```
-    
-2. **Air Pollution Data Aggregations**:
-    
-    ```python
-    # Daily Average AQI: Compute the daily average Air Quality Index (AQI)
-    aqi_agg_df = air_pollution_df.groupBy(F.date_format(col("date_time"), "yyyy-MM-dd").alias("date")).agg(
-        F.round(F.avg("us_aqi")).alias("avg_us_aqi")
-    )
-    
-    # Pollutant Aggregation: Calculate daily averages for each pollutant
-    pollutant_agg_df = air_pollution_df.groupBy(F.date_format(col("date_time"), "yyyy-MM-dd").alias("date")).agg(
-        F.round(F.avg("co"),2).alias("avg_co"),
-        F.round(F.avg("no2"),2).alias("avg_no2"),
-        F.round(F.avg("o3"),2).alias("avg_o3"),
-        F.round(F.avg("so2"),2).alias("avg_so2"),
-        F.round(F.avg("pm2_5"),2).alias("avg_pm2_5"),
-        F.round(F.avg("pm10"),2).alias("avg_pm10")
-    )
-    
-    # Identify High Pollution Events: Mark days with high pollution levels based on a specified threshold
-    high_pollution_events_df = air_pollution_df.withColumn("high_pollution", F.when(col("us_aqi") > 100, 1).otherwise(0)).groupBy(F.date_format(col("date_time"), "yyyy-MM-dd").alias("date")).agg(
-        F.sum("high_pollution").alias("high_pollution_events")
-    )
-    ```
-    
-    ```python
-    # Display the Aggregated Data for air pollution (use show)
-    #you have to write this code
-    ```
-    
-    <aside>
-    💡
-    
-    **`weather_condition_counts_df`**counts the number of occurrences of different weather conditions for each day.
-    
-    - **`weather_df.groupBy(...)`**: groups the DataFrame by the date extracted from the `date_time` column and the `weather_main_value` column.
-        - **`F.date_format(col("date_time"), "yyyy-MM-dd")`**: Extracts just the date (in "yyyy-MM-dd" format) from the `date_time` column and aliases it as `date`.
-        - **`"weather_main_value"`**: This column likely represents the main weather condition (e.g., sunny, cloudy, rainy).
-    </aside>
-    
+INSERT INTO DimWeatherCondition
+SELECT DISTINCT 
+    weather_id_value, 
+    weather_icon_value, 
+    weather_main_value, 
+    weather_description_value,
+    CONCAT(weather_id_value, '_', weather_icon_value) AS weather_combined_value
+FROM 
+    ...--what is your external table for weather?
+GO
+```
 
-### 5. **Save Data to the Gold Layer**
+```sql
+-- Create and load DimDate table
+CREATE TABLE DimDate (
+-- A dimension table focused on date attributes.
+-- Provides date details like year, month, day, quarter, and week, along with names for days and months, and a weekend indicator.
+);
+GO
 
-1. Save Processed and Aggregated Data to the Gold Layer (YOU HAVE TO SPECIFY WHERE YOUR GOLD IS)
-    
-    ```python
-    # Save aggregated data as single files
-    # can modify this to go directly to your directories
-    weather_agg_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_weather")
-    weather_condition_counts_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_weather_conditions")
-    temp_extremes_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_temp_extremes")
-    aqi_agg_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_aqi")
-    pollutant_agg_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_pollutants")
-    high_pollution_events_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../agg_high_pollution_events")
-    
-    # Save processed weather data
-    weather_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../processed_weather")
-    
-    # Save processed air pollution data
-    air_pollution_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/....../processed_air_pollution")
-    
-    ```
-    
-    <aside>
-    💡
-    
-    ```python
-    # Save processed weather data
-    weather_df.coalesce(1).write.mode("overwrite").parquet(f"{abfss_base_path}/processed_weather")
-    
-    ```
-    
-    This line will save the `weather_agg_df` DataFrame as a single Parquet file in the `/gold/agg_weather` directory.
-    
-    </aside>
-    
-2. Rename the files (Optional)
-    
-    ```python
-    # Define function to rename part file to desired name
-    def rename_part_file(directory, filename):
-        files = dbutils.fs.ls(directory)
-        for file in files:
-            if file.name.startswith("part-") and file.name.endswith(".parquet"):
-                dbutils.fs.mv(file.path, directory + filename)
-                break
-    
-    # Rename files
-    ```
-    
+-- Populate DimDate Table from ExternalWeather
+INSERT INTO DimDate ()
+SELECT DISTINCT 
+FROM
+GO
+```
 
-### 6. Terminate the Cluster
+```sql
+-- Create and load AggTempExtremes table
+CREATE TABLE AggTempExtremes (
+-- An aggregated table that records temperature extremes.
+-- Stores maximum and minimum temperatures for each date.
+...
+);
+GO
 
-1. **Terminate the Cluster**:
-    - After completing the homework, navigate to the “Compute” tab in your workspace.
-    - Select your cluster and click the “Terminate” button to stop the cluster.
+INSERT INTO AggTempExtremes (...)
+SELECT ... 
+FROM ...
+GO
+```
+
+```sql
+-- Create and load AggWeatherConditions table
+CREATE TABLE AggWeatherConditions (
+-- An aggregated table that counts occurrences of weather conditions.
+-- Provides the number of instances of each weather condition by date.
+...
+);
+GO
+
+INSERT INTO AggWeatherConditions (...)
+SELECT ...
+FROM ...
+GO
+```
+
+```sql
+-- Create and load AggWeather table
+CREATE TABLE AggWeather (
+-- An aggregated table that summarizes weather data.
+-- Includes average temperature, humidity, and wind speed, as well as maximum and minimum temperatures for each date.
+);
+GO
+
+INSERT INTO AggWeather (...)
+SELECT ...
+FROM ...
+GO
+```
+
+```sql
+-- Create and load HighPollutionEvents table
+CREATE TABLE HighPollutionEvents (
+-- A table tracking high pollution events.
+-- Contains the count of high pollution occurrences for each date.
+-- REFER TO THE SCHEMA IN synapse
+);
+GO
+
+INSERT INTO HighPollutionEvents (...)
+SELECT ...
+FROM ...
+GO
+```
+
+```sql
+-- Create and load AggPollutants table
+CREATE TABLE AggPollutants (
+-- An aggregated table for air pollutant data.
+-- Stores average concentrations of various pollutants (CO, NO2, O3, etc.) by date.
+...
+);
+GO
+
+INSERT INTO AggPollutants (...)
+SELECT ...
+FROM ...
+GO
+```
+
+```sql
+-- Create and load AggAQI table
+CREATE TABLE AggAQI (
+-- An aggregated table for Air Quality Index (AQI) data.
+-- Contains average AQI values for each date.
+);
+...
+GO
+
+INSERT INTO AggAQI (...)
+SELECT ...
+FROM ...
+GO
+```
+<details>
+  <summary><strong>⚠️ DROP SCRIPT (Use with caution!)</strong></summary>
+
+<div markdown="1">
+
+> **Only drop tables in case you encounter issues with specific ones!**  
+> Running the entire script **will reset all your progress**.
+
+```sql
+-- Drop external tables
+DROP EXTERNAL TABLE ExternalAggAQI;
+DROP EXTERNAL TABLE ExternalAggPollutants;
+DROP EXTERNAL TABLE ExternalAggTempExtremes;
+DROP EXTERNAL TABLE ExternalAggWeather;
+DROP EXTERNAL TABLE ExternalAggWeatherConditions;
+DROP EXTERNAL TABLE ExternalAirPollution;
+DROP EXTERNAL TABLE ExternalHighPollutionEvents;
+DROP EXTERNAL TABLE ExternalWeather;
+GO
+
+-- Drop regular tables
+DROP TABLE AggAQI;
+DROP TABLE AggPollutants;
+DROP TABLE AggTempExtremes;
+DROP TABLE AggWeather;
+DROP TABLE AggWeatherConditions;
+DROP TABLE DimDateTime;
+DROP TABLE DimLocation;
+DROP TABLE DimAirPollution;
+DROP TABLE DimWeatherCondition;
+DROP TABLE FactWeather;
+DROP TABLE HighPollutionEvents;
+DROP TABLE DimDate;
+GO
+```
     
-    <aside>
-    💡 Terminating a cluster is important to stop resource consumption and avoid unnecessary costs. Clusters are the compute engines that run your notebooks and jobs, and they consume resources while running, even if idle.
-    
-    </aside>
-    
+```sql
+-- Drop external tables
+DROP EXTERNAL TABLE ExternalAggAQI;
+DROP EXTERNAL TABLE ExternalAggPollutants;
+DROP EXTERNAL TABLE ExternalAggTempExtremes;
+DROP EXTERNAL TABLE ExternalAggWeather;
+DROP EXTERNAL TABLE ExternalAggWeatherConditions;
+DROP EXTERNAL TABLE ExternalAirPollution;
+DROP EXTERNAL TABLE ExternalHighPollutionEvents;
+DROP EXTERNAL TABLE ExternalWeather;
+GO
+
+-- Drop regular tables
+DROP TABLE AggAQI;
+DROP TABLE AggPollutants;
+DROP TABLE AggTempExtremes;
+DROP TABLE AggWeather;
+DROP TABLE AggWeatherConditions;
+DROP TABLE DimDateTime;
+DROP TABLE DimLocation;
+DROP TABLE DimAirPollution;
+DROP TABLE DimWeatherCondition;
+DROP TABLE FactWeather;
+DROP TABLE HighPollutionEvents;
+DROP TABLE DimDate;
+GO
+```
+</div>
+</details>
+
+### 3. Validate Data in Synapse Analytics
+1. **Query the Data**:
+```sql
+SELECT TOP 10 * FROM FactWeather;
+SELECT TOP 10 * FROM DimLocation;
+SELECT TOP 10 * FROM DimAirPollution;
+SELECT TOP 10 * FROM DimWeatherCondition;
+SELECT TOP 10 * FROM DimDateTime;
+SELECT TOP 10 * FROM DimDate;
+SELECT TOP 10 * FROM AggWeather;
+SELECT TOP 10 * FROM AggWeatherConditions;
+SELECT TOP 10 * FROM AggTempExtremes;
+SELECT TOP 10 * FROM AggAQI;
+SELECT TOP 10 * FROM AggPollutants;
+SELECT TOP 10 * FROM HighPollutionEvents;
+```
+1. **Pause the SQL Pool**:
+    - Go to the [Azure Portal](https://portal.azure.com/).
+    - Navigate to your Synapse Analytics workspace.
+    - Click on "SQL pools" under the "Data" section.
+    - Select your dedicated SQL pool.
+    - Click on "Pause" to pause the SQL pool when not in use to save costs.
 
 ### Deliverables
-
-1. **Exported Synapse Notebook HTML and attach**
-2. **Screenshot of Data in Azure Data Lake Storage**
-    ![alt text](images/data.png)
+1. **Screenshot of Data in Synapse Analytics**:
+    - Provide a screenshot showing the loaded data in the internal tables in Azure Synapse Analytics (show the dropdown of all the tables you created, and a successful selection from the various tables).
+        
+        ![alt text](images/image-4.png)
+        
+        ![alt text](images/image-5.png)
