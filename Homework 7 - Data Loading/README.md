@@ -135,7 +135,7 @@ https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/develop-tables-ext
     </aside>
     
     **Overview of External Tables**
-    
+    You will be making several external table schemas. You can verify their creation after running the scripts by refreshing the "External Table" folder within synapse (3 dots --> refresh).
     - **ExternalAirPollution**:
         - Stores air pollution data, including pollutants like CO, NO, NO2, etc.
     - **ExternalWeather**:
@@ -154,7 +154,7 @@ https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/develop-tables-ext
         - Tracks the number of high pollution events by date.
     
     #### **Connect to External Data Source and Parquet File Format**
-    
+    Connect to the container holding your homework files! We will specify the file path within the external table code.
     ```sql
     -- Create external data source
     CREATE EXTERNAL DATA SOURCE MyDataSource
