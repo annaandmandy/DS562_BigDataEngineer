@@ -4,15 +4,13 @@
 
 
 >💡 ***What is Azure Synapse Analytics?*
-[Azure Synapse Analytics](https://azure.microsoft.com/en-us/products/synapse-analytics#:~:text=Azure%20Synapse%20Analytics%20is%20an,log%20and%20time%20series%20analytics)**: query data using either serverless or provisioned resources, providing a unified experience to ingest, prepare, manage, and serve data for immediate business intelligence and machine learning needs. Synapse enables efficient data processing across various data types, including structured, unstructured, and streaming data, making it ideal for complex analytical workloads.
+[Azure Synapse Analytics](https://azure.microsoft.com/en-us/products/synapse-analytics#:~:text=Azure%20Synapse%20Analytics%20is%20an,log%20and%20time%20series%20analytics)**: query data using either dedicated or provisioned resources, providing a unified experience to ingest, prepare, manage, and serve data for immediate business intelligence and machine learning needs. Synapse enables efficient data processing across various data types, including structured, unstructured, and streaming data, making it ideal for complex analytical workloads.
 
 
 https://learn.microsoft.com/en-us/answers/questions/1345798/azure-synapse-what-is-the-difference-between-nativ 
 <details> <summary><strong>External Vs Internal Tables in Synapse (toggle the dropdown)</strong></summary> <br>
     In Azure Synapse Analytics, external and internal tables serve different purposes and are designed for different use cases. Here’s a detailed comparison of the two:
     ---
-
-
 ### 🗂️ Internal Tables
 
 **Definition:**  
@@ -121,9 +119,9 @@ https://learn.microsoft.com/en-us/answers/questions/1157039/synapse-copy-activit
 ## 2. Load Data from ADLS to Data Warehouse
 1. **Create External Tables**:
 
-    >💡**External tables** in Azure Synapse Analytics are used to access and manage data stored outside the serverless SQL pool. Here are some key uses:
+    >💡**External tables** in Azure Synapse Analytics are used to access and manage data stored outside the dedicated SQL pool. Here are some key uses:
         - Querying external data using Transact-SQL statements
-        - Import data from external storage into serverless SQL pool
+        - Import data from external storage into dedicated SQL pool
             - different tools for quick ad-hoc analytics on data without needing to load it into the SQL pool 
     For the task below, we are first creating the external tables to load data initially without needing to store it in the SQL pool.
     
@@ -131,7 +129,7 @@ https://learn.microsoft.com/en-us/answers/questions/1157039/synapse-copy-activit
     
     https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/create-use-external-tables
     - In Synapse Studio, open a new SQL script
-    - Connect to your Serverless SQL Pool (e.g. “ds598sqlpool”)
+    - Connect to your dedicated SQL Pool (e.g. “ds598sqlpool”)
     - Use your created database (e.g. “ds598sqlpool”)
     - Create **external tables** to read data from the gold layer in ADLS.
 
@@ -166,8 +164,8 @@ https://learn.microsoft.com/en-us/answers/questions/1157039/synapse-copy-activit
     #### **Connect to External Data Source and Parquet File Format**
     Connect to the container holding your homework files! We will specify the file path within the external table code.
     ```sql
-    -- Create external data source
-    CREATE EXTERNAL DATA SOURCE MyDataSource
+    -- Create external data source to connect to your container
+    CREATE EXTERNAL DATA SOURCE MyDataSource 
     WITH (
         LOCATION = 'https://your_storage_account_name.dfs.core.windows.net/your_container'
     );
@@ -186,7 +184,7 @@ https://learn.microsoft.com/en-us/answers/questions/1157039/synapse-copy-activit
     >💡
     ![alt text](images/image-1.png)
     ```sql
-    CREATE EXTERNAL TABLE ExternalWeather ( --positionality only matters for dedicated, can put in any sort of order here
+    CREATE EXTERNAL TABLE ExternalWeather ( --positionality matters for dedicated tables! Ensure its the correct order of datatypes and correct number
         calctime FLOAT,
         city_id BIT,
         cnt SMALLINT,
@@ -747,7 +745,7 @@ SELECT TOP 10 * FROM HighPollutionEvents;
     - Go to the [Azure Portal](https://portal.azure.com/).
     - Navigate to your Synapse Analytics workspace.
     - Click on "SQL pools" under the "Data" section.
-    - Select your serverless SQL pool.
+    - Select your Dedicated SQL pool.
     - Click on "Pause" to pause the SQL pool when not in use to save costs.
 
 ### Deliverables
