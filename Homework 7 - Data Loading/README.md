@@ -405,7 +405,7 @@ Dedicated SQL pools also use **Hadoop External Tables** as opposed to **Native E
     
     **Other External Tables**
     
-    Follow the same process - referring to the schema found in your synapse notebook output and translating that into external tables —> inserting into regular tables. 
+    Follow the same process - referring to the schema found in your synapse notebook output and translating that into external tables —> inserting into regular tables. We recommend doing this process one by one and doing a SELECT to make sure each table is in fact being created in the intended way.
     
     >💡**Datatyping General Rule of Thumb:** here are some datatype conversions you can consider doing when going from  synapse schemas → external tables
         - string → nvarchar(100)
