@@ -739,7 +739,7 @@ SELECT TOP 10 * FROM HighPollutionEvents;
     - Go to the [Azure Portal](https://portal.azure.com/).
     - Navigate to your Synapse Analytics workspace.
     - Click on "SQL pools" under the "Data" section.
-    - Select your dedicated SQL pool.
+    - Select your serverless SQL pool.
     - Click on "Pause" to pause the SQL pool when not in use to save costs.
 
 ### Deliverables
