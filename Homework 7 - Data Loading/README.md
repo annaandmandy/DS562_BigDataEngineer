@@ -7,10 +7,11 @@
 [Azure Synapse Analytics](https://azure.microsoft.com/en-us/products/synapse-analytics#:~:text=Azure%20Synapse%20Analytics%20is%20an,log%20and%20time%20series%20analytics)**: query data using either serverless or provisioned resources, providing a unified experience to ingest, prepare, manage, and serve data for immediate business intelligence and machine learning needs. Synapse enables efficient data processing across various data types, including structured, unstructured, and streaming data, making it ideal for complex analytical workloads.
 
 
-
+https://learn.microsoft.com/en-us/answers/questions/1345798/azure-synapse-what-is-the-difference-between-nativ 
 <details> <summary><strong>External Vs Internal Tables in Synapse (toggle the dropdown)</strong></summary> <br>
     In Azure Synapse Analytics, external and internal tables serve different purposes and are designed for different use cases. Here’s a detailed comparison of the two:
     ---
+
 
 ### 🗂️ Internal Tables
 
@@ -88,23 +89,32 @@ External tables query data stored outside Synapse (e.g., in Azure Data Lake or B
 </details>
 
 >💡**Dedicated Vs. Serverless SQL Pools in Synapse**
-We will be using the **Serverless SQL pool** in Synapse for the duration of this homework (which is provided in the Synapse automatically). Here are some primary differences:
+We will be using the **Dedicated SQL pool** to create actual tables (CREATE TABLE) in Synapse for the duration of this homework (which is provided in the Synapse automatically). Here are some primary differences:
         - **Resource Management:** Dedicated pools require manual scaling and management, while Serverless pools handle scaling automatically.
         - **Billing:** Dedicated pools incur costs based on provisioned resources, whereas Serverless pools charge based on the volume of data processed by each query.
         - **Data Storage:** Dedicated pools store data within the pool itself, whereas Serverless pools query data directly from external storage like Azure Data Lake.
 Dedicated SQL pools also use **Hadoop External Tables** as opposed to **Native External Tables.** 
 https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/develop-tables-external-tables?tabs=hadoop
+https://learn.microsoft.com/en-us/answers/questions/1157039/synapse-copy-activity-error-create-table-dbo-is-no 
 ![alt text](images/image.png)
 
 ### Steps:
 >⚠️ [We are providing you with this guidance to prevent any unnecessary costs!](https://learn.microsoft.com/en-us/answers/questions/992615/cost-comparison-serverless-vs-dedicated-sql-pool)
 ## 1. Set Up Azure Synapse Analytics
-1. **Create a Synapse Workspace**:
+1. **Reuse existing Synapse Workspace**:
     - https://learn.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-workspace
-2. **Use Serverless SQL Pool**:
+2. **Create a Dedicated SQL Pool**:
+    ⚠️ [We are providing you with this guidance to prevent any unnecessary costs!](https://learn.microsoft.com/en-us/answers/questions/992615/cost-comparison-serverless-vs-dedicated-sql-pool)
     - In your Synapse workspace, go to “SQL pools” under the “Analytics pools” section.
-    - You will see "built-in" serverless pool, which is part of the synapse work
-    - When you create a *Workspace*, you will see the option to select *Serverless*
+    - Click on “New” to create a new SQL pool.
+    - **Choose the cheapest tier (DW100c) for cost efficiency.**
+    - Configure the SQL pool settings (name, performance level, etc.) and create the pool.
+    - Note: To manage costs, make sure to pause the SQL pool when not in use.
+   
+    >⚠️ ****EXTREMELY IMPORTANT NOTE!!!**** 
+    **THE SQL POOL COSTS *$1.30 PER HOUR*
+    MAKE SURE YOU PAUSE IT WHEN YOU’RE NOT USING IT!!
+    ** POINTS WILL BE DEDUCTED FROM YOUR HW GRADES IF YOU CANNOT PROPERLY MANAGE COST.**
 
 >⚠️ ****EXTREMELY IMPORTANT NOTE!!!**** **SQL POOLS ARE COSTLY! PLEASE ENSURE ITS SHUT DOWN IF NOT BEING USED!!!
 
@@ -226,7 +236,7 @@ https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/develop-tables-ext
     
 
     >💡Now we are going to use SQL scripts to actually load the data into our external tables within our SQL pool! 
-    We first create the table within our SQL pool corresponding to each external table, then load the data from external → internal table.
+    We first create the table within our SQL pool corresponding to each external table, then load the data from external → internal table. We need to create a **dedicated SQL Pool** to create dedicated SQL tables. The reasoning for this is because external tables don't actually hold the data. 
     https://learn.microsoft.com/en-us/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-develop-ctas
     
     </aside>
