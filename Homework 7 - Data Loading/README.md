@@ -1,4 +1,4 @@
-# HW8: Data Loading
+# HW7: Data Loading
 
 **Objective:** Move the processed data from the Gold layer in Azure Data Lake Storage (ADLS) to the data warehouse using Azure Synapse Analytics. Specifically, we are ingesting data from our storage account first into *external tables*, then branching off those external tables to create internal synapse dimension, fact, and aggregated tables.
 
