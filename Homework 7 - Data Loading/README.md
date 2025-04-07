@@ -181,7 +181,7 @@ Dedicated SQL pools also use **Hadoop External Tables** as opposed to **Native E
     
     ####**External Weather Table —> FactWeather Table**
     
-    >💡
+    >💡Since Dedicated SQL Pool’s external tables are based on positioning, your external table might look drastically different based on what you did for prior homeworks. The following code follows the below schemas we used in our provided code examples (take note of the column ordering).
     ![alt text](images/image-1.png)
     ```sql
     CREATE EXTERNAL TABLE ExternalWeather ( --positionality matters for dedicated tables! Ensure its the correct order of datatypes and correct number
