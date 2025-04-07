@@ -2,6 +2,7 @@
 
 **Objective:** Move the processed data from the Gold layer in Azure Data Lake Storage (ADLS) to the data warehouse using Azure Synapse Analytics. Specifically, we are ingesting data from our storage account first into *external tables*, then branching off those external tables to create internal synapse dimension, fact, and aggregated tables.
 
+**IMPORTANT NOTE BEFORE YOU START:** The following provided schemas might not reflect what you have in your current datasets. Any code we provide you will most likely have to be modified/altered to match what you have in terms of data fields/data types.
 
 >💡 ***What is Azure Synapse Analytics?*
 [Azure Synapse Analytics](https://azure.microsoft.com/en-us/products/synapse-analytics#:~:text=Azure%20Synapse%20Analytics%20is%20an,log%20and%20time%20series%20analytics)**: query data using either dedicated or provisioned resources, providing a unified experience to ingest, prepare, manage, and serve data for immediate business intelligence and machine learning needs. Synapse enables efficient data processing across various data types, including structured, unstructured, and streaming data, making it ideal for complex analytical workloads.
