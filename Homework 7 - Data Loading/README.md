@@ -88,7 +88,7 @@ External tables query data stored outside Synapse (e.g., in Azure Data Lake or B
 </details>
 
 >💡**Dedicated Vs. Serverless SQL Pools in Synapse**
-We will be using the **Serverless SQL pool** in Synapse for the duration of this homework. Here are some primary differences:
+We will be using the **Serverless SQL pool** in Synapse for the duration of this homework (which is provided in the Synapse automatically). Here are some primary differences:
         - **Resource Management:** Dedicated pools require manual scaling and management, while Serverless pools handle scaling automatically.
         - **Billing:** Dedicated pools incur costs based on provisioned resources, whereas Serverless pools charge based on the volume of data processed by each query.
         - **Data Storage:** Dedicated pools store data within the pool itself, whereas Serverless pools query data directly from external storage like Azure Data Lake.
@@ -101,12 +101,10 @@ https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/develop-tables-ext
 ## 1. Set Up Azure Synapse Analytics
 1. **Create a Synapse Workspace**:
     - https://learn.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-workspace
-2. **Create a Serverless SQL Pool**:
+2. **Use Serverless SQL Pool**:
     - In your Synapse workspace, go to “SQL pools” under the “Analytics pools” section.
-    - Click on “New” to create a new SQL pool.
-    - **Choose the cheapest tier (DW100c) for cost efficiency.**
-    - Configure the SQL pool settings (name, performance level, etc.) and create the pool.
-    - Note: To manage costs, make sure to pause the SQL pool when not in use.
+    - You will see "built-in" serverless pool, which is part of the synapse work
+    - When you create a *Workspace*, you will see the option to select *Serverless*
 
 >⚠️ ****EXTREMELY IMPORTANT NOTE!!!**** **SQL POOLS ARE COSTLY! PLEASE ENSURE ITS SHUT DOWN IF NOT BEING USED!!!
 
