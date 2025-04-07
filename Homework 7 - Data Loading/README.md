@@ -87,13 +87,13 @@ External tables query data stored outside Synapse (e.g., in Azure Data Lake or B
 </details>
 
 >💡**Dedicated Vs. Serverless SQL Pools in Synapse**
-We will be using the **Dedicated SQL pool** to create actual tables (CREATE TABLE) in Synapse for the duration of this homework (which is provided in the Synapse automatically). Here are some primary differences:
-        - **Resource Management:** Dedicated pools require manual scaling and management, while Serverless pools handle scaling automatically.
-        - **Billing:** Dedicated pools incur costs based on provisioned resources, whereas Serverless pools charge based on the volume of data processed by each query.
-        - **Data Storage:** Dedicated pools store data within the pool itself, whereas Serverless pools query data directly from external storage like Azure Data Lake.
-Dedicated SQL pools also use **Hadoop External Tables** as opposed to **Native External Tables.** 
-https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/develop-tables-external-tables?tabs=hadoop
-https://learn.microsoft.com/en-us/answers/questions/1157039/synapse-copy-activity-error-create-table-dbo-is-no 
+We will be using the **dedicated SQL pool** in Synapse for the duration of this homework. Here are some primary differences:
+
+- **Resource Management:** Dedicated pools require manual scaling and management, while serverless pools handle scaling automatically.
+- **Billing:** Dedicated pools incur costs based on provisioned resources, whereas serverless pools charge based on the volume of data processed by each query.
+- **Data Storage:** Dedicated pools store data within the pool itself, whereas serverless pools query data directly from external storage like Azure Data Lake.
+
+Dedicated SQL pools also use **Hadoop External Tables** as opposed to **Native External Tables.** For our purposes, this means the **ORDERING OF OUR COLUMNS MATTER** in our external tables, and has to positionally match with the schemas we ingested upon. Native External Tables have the ability to match on column name irregardless of positioning, but since we are using dedicated for lower overall cost, positioning is something we ahve to keep in mind.
 ![alt text](images/image.png)
 
 ### Steps:
