@@ -742,7 +742,7 @@ SELECT TOP 10 * FROM AggAQI;
 SELECT TOP 10 * FROM AggPollutants;
 SELECT TOP 10 * FROM HighPollutionEvents;
 ```
-1. **Pause the SQL Pool**:
+1. **Pause the SQL Pool** (Please MAKE SURE TO PAUSE your dedicated SQL pool it DOES NOT AUTO SHUT OFF)
     - Go to the [Azure Portal](https://portal.azure.com/).
     - Navigate to your Synapse Analytics workspace.
     - Click on "SQL pools" under the "Data" section.
@@ -756,3 +756,5 @@ SELECT TOP 10 * FROM HighPollutionEvents;
         ![alt text](images/image-4.png)
         
         ![alt text](images/image-5.png)
+      
+
