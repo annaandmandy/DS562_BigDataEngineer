@@ -2,7 +2,7 @@
 
 **Objective:** Move the processed data from the Gold layer in Azure Data Lake Storage (ADLS) to the data warehouse using Azure Synapse Analytics. Specifically, we are ingesting data from our storage account first into *external tables*, then branching off those external tables to create internal synapse dimension, fact, and aggregated tables.
 
-**IMPORTANT NOTE BEFORE YOU START:** The following provided schemas might not reflect what you have in your current datasets. Any code we provide you will most likely have to be modified/altered to match what you have in terms of data fields/data types.
+**IMPORTANT NOTE BEFORE YOU START:** The following provided schemas might not reflect what you have in your current datasets. Any code we provide you will most likely have to be modified/altered to match what you have in terms of data fields/data types. Also, positionality of columns should be accounted for when **inserting into the Dedicated SQL Table**.
 
 >💡 ***What is Azure Synapse Analytics?*
 [Azure Synapse Analytics](https://azure.microsoft.com/en-us/products/synapse-analytics#:~:text=Azure%20Synapse%20Analytics%20is%20an,log%20and%20time%20series%20analytics)**: query data using either dedicated or provisioned resources, providing a unified experience to ingest, prepare, manage, and serve data for immediate business intelligence and machine learning needs. Synapse enables efficient data processing across various data types, including structured, unstructured, and streaming data, making it ideal for complex analytical workloads.
@@ -94,7 +94,7 @@ We will be using the **dedicated SQL pool** in Synapse for the duration of this 
 - **Billing:** Dedicated pools incur costs based on provisioned resources, whereas serverless pools charge based on the volume of data processed by each query.
 - **Data Storage:** Dedicated pools store data within the pool itself, whereas serverless pools query data directly from external storage like Azure Data Lake.
 
-Dedicated SQL pools also use **Hadoop External Tables** as opposed to **Native External Tables.** For our purposes, this means the **ORDERING OF OUR COLUMNS MATTER** in our external tables, and has to positionally match with the schemas we ingested upon. Native External Tables have the ability to match on column name irregardless of positioning, but since we are using dedicated for lower overall cost, positioning is something we ahve to keep in mind.
+Dedicated SQL pools also use **Hadoop External Tables** as opposed to **Native External Tables.** For our purposes, this means the **ORDERING OF OUR COLUMNS MATTER** in our external tables, and has to positionally match with the schemas we ingested upon (when inserting). Native External Tables have the ability to match on column name irregardless of positioning, but since we are using dedicated for lower overall cost, positioning is something we ahve to keep in mind. 
 ![alt text](images/image.png)
 
 ### Steps:
@@ -185,7 +185,7 @@ Dedicated SQL pools also use **Hadoop External Tables** as opposed to **Native E
     >💡Since Dedicated SQL Pool’s external tables are based on positioning, your external table might look drastically different based on what you did for prior homeworks. The following code follows the below schemas we used in our provided code examples (take note of the column ordering).
     ![alt text](images/image-1.png)
     ```sql
-    CREATE EXTERNAL TABLE ExternalWeather ( --positionality matters for dedicated tables! Ensure its the correct order of datatypes and correct number
+    CREATE EXTERNAL TABLE ExternalWeather (
         calctime FLOAT,
         city_id BIT,
         cnt SMALLINT,
@@ -271,7 +271,7 @@ Dedicated SQL pools also use **Hadoop External Tables** as opposed to **Native E
     ```
     
     ```sql
-    -- Insert data into FactWeather
+    -- Insert data into FactWeather (POSITIONALITY MATTERS WITH THE INSERT)
     --wind columns might be null if you didnt ingest them, so remove them from the insert
     INSERT INTO FactWeather (id, date_time, date, location, humidity, pressure, clouds_all, temp_K, feels_like_K, temp_max_K, temp_min_K, temp_C, feels_like_C, temp_max_C, temp_min_C, temp_F, feels_like_F, temp_max_F, temp_min_F, weather_combined_value)
     SELECT 
