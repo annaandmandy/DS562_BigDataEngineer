@@ -112,3 +112,4 @@ https://www.youtube.com/watch?v=NISsW-bVAwU (cool video, saves you a bunch of ti
 2. **Screenshots of Synapse Pool, FunctionApp, Stream Analytics:** Screenshots showing the paused/stopped dedicated SQL pool, function app, and stream analytics.
 3. **Screenshot of Cost Management**: A screenshot showing the cost management details across the entire semester.
 ![alt text](images/image-1.png)
+
