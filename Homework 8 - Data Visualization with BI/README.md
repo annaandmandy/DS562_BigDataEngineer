@@ -85,9 +85,9 @@
 Feel free to revisit this snippet after you have an automated ML workflow running. We can directly reference a model’s outputs from an automated ML workflow within our PowerBI dashboard environment. Here is a YT tutorial showing an in-depth walk through in how to create visualizations off of the predicted output of your Automated ML:
 https://youtu.be/0sAuOt-wO4s?t=552 
 
-### 5. Create Interactive Dashboards
+### 5. Create Dashboards
 https://www.youtube.com/watch?v=NISsW-bVAwU (cool video, saves you a bunch of time)
-1. **Create Visualizations**:
+1. **Create Interactive Visualizations**:
     >💡 Interactive = responsive to user input in this case.
     This can just be simple filters, or you could implement deeper interactiveness if you have the capability to do so. All we are expecting are **clean dashboards** that helps us answer the question: **How are *Air pollution levels affected by weather?*** (*this is the most straight forward question to answer with the data, but feel free to branch out)*
     Compare trends, aggregate visualizations, etc. 
@@ -109,7 +109,7 @@ https://www.youtube.com/watch?v=NISsW-bVAwU (cool video, saves you a bunch of ti
 ### Deliverables:
 
 1. **Screenshots of the Dashboard:** Screenshots showing your dashboard.
-2. **Screenshots of Synapse Pool, FunctionApp, Stream Analytics:** Screenshots showing the paused/stopped dedicated SQL pool, function app, and stream analytics.
+2. **Screenshots of Synapse Pool, Stream Analytics:** Screenshots showing the paused/stopped dedicated SQL pool, and stream analytics.
 3. **Screenshot of Cost Management**: A screenshot showing the cost management details across the entire semester.
 ![alt text](images/image-1.png)
 
